@@ -121,7 +121,7 @@ if (typeof AFRAME === 'undefined') {
    */
 AFRAME.registerComponent('island', {
 	schema: {
-	  id: {type: 'number', default: 0},
+	  	id: {type: 'number', default: Math.floor(Math.random()*1000000)+1}, //random number between 1 and 1.000.000
 		depth: {type: 'number', default: 1},
 		height: {type: 'number', default: 1},
 		width: {type: 'number', default: 1},
@@ -135,7 +135,15 @@ AFRAME.registerComponent('island', {
 	/**
 	 * Called once when component is attached. Generally for initial setup.
 	 */
-	init: function () { },
+	init: function () {
+		var self = this;
+		var data = this.data;
+		var entity = document.createElement('a-box');
+		entity.setAttribute('height',data.height);
+		entity.setAttribute('depth',data.depth);
+		entity.setAttribute('width',data.width);
+		this.el.appendChild(entity);
+	 },
   
 	/**
 	 * Called when component is attached and when component data changes.
@@ -175,7 +183,12 @@ AFRAME.registerComponent('island', {
   });
   
   AFRAME.registerComponent('islands', {
-	schema: {},
+	schema: {
+		id: {type: 'number', default: Math.floor(Math.random()*1000000)+1}, //random number between 1 and 1.000.000
+		depth: {type: 'number', default: 1},
+		height: {type: 'number', default: 1},
+		width: {type: 'number', default: 1},
+	},
   
 	/**
 	 * Set if component needs multiple instancing.
