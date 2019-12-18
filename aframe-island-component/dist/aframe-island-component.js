@@ -119,12 +119,12 @@ if (typeof AFRAME === 'undefined') {
   /**
    * Island component for A-Frame.
    */
-AFRAME.registerComponent('island', {
+AFRAME.registerComponent('newisland', {
 	schema: {
-	  	id: {type: 'number', default: Math.floor(Math.random()*1000000)+1}, //random number between 1 and 1.000.000
 		depth: {type: 'number', default: 1},
 		height: {type: 'number', default: 1},
 		width: {type: 'number', default: 1},
+		color: {type: 'color', default: '#FFFFFF'}
 	},
   
 	/**
@@ -136,13 +136,19 @@ AFRAME.registerComponent('island', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
-		var self = this;
 		var data = this.data;
-		var entity = document.createElement('a-box');
-		entity.setAttribute('height',data.height);
-		entity.setAttribute('depth',data.depth);
-		entity.setAttribute('width',data.width);
-		this.el.appendChild(entity);
+		var el = this.el;
+
+		this.geometry = new THREE.BoxBufferGeometry(data.width,data.height,data.depth);
+
+		this.material = new THREE.MeshStandardMaterial({color: data.color});
+
+		this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+		// Set mesh on entity.
+		el.setObject3D('mesh', this.mesh);
+
+
 	 },
   
 	/**
@@ -183,6 +189,7 @@ AFRAME.registerComponent('island', {
   });
   
   AFRAME.registerComponent('islands', {
+	  import data from 'attrName./data.json';
 	schema: {
 		id: {type: 'number', default: Math.floor(Math.random()*1000000)+1}, //random number between 1 and 1.000.000
 		depth: {type: 'number', default: 1},
