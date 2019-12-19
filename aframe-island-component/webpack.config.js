@@ -1,7 +1,7 @@
-const path = require('path');
-const webpack = require('webpack');
+//const path = require('path');
+//const webpack = require('webpack');
 
-const PLUGINS = [];
+//const PLUGINS = [];
 
 module.exports = {
   devServer: {
@@ -22,7 +22,20 @@ module.exports = {
         test: /\.js/,
         exclude: /(node_modules)/,
         use: ['babel-loader']
+      },
+      {
+        type: 'javascript/auto',
+        test: /\.json$/,
+        include: [path.resolve(__dirname, 'src')],
+        use: [
+          {
+            loader: 'file-loader',
+            options: {name: '[name].[ext]'}
+          }
+        ]
       }
+      
+
     ]
   },
   resolve: {

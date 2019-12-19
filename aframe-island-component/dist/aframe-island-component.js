@@ -1,3 +1,6 @@
+//import data from './data.json';
+
+
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -187,14 +190,17 @@ AFRAME.registerComponent('newisland', {
 	  // click: function (evt) { }
 	}
   });
+
+  
   
   AFRAME.registerComponent('islands', {
-	  import data from 'attrName./data.json';
+	 
 	schema: {
 		id: {type: 'number', default: Math.floor(Math.random()*1000000)+1}, //random number between 1 and 1.000.000
 		depth: {type: 'number', default: 1},
 		height: {type: 'number', default: 1},
 		width: {type: 'number', default: 1},
+		databox: {type: 'asset'}
 	},
   
 	/**
@@ -205,13 +211,52 @@ AFRAME.registerComponent('newisland', {
 	/**
 	 * Called once when component is attached. Generally for initial setup.
 	 */
-	init: function () { },
-  
+	init: function () {
+		var self = this;
+
+		this.loader = new THREE.FileLoader();
+	 },
+	
+
 	/**
 	 * Called when component is attached and when component data changes.
 	 * Generally modifies the entity based on the data.
 	 */
-	update: function (oldData) { },
+	update: function (oldData) {
+		const data = this.data;
+
+		if (data.databox && data.databox !== oldData.databox) {
+			this.loader.load(data.databox, this.onDataLoaded.bind(this));
+		  }
+
+	 },
+
+	 onDataLoaded: function (file) {
+		  // ... create box for each data
+		var self = this;
+		var data = this.data;
+		var depth = data.depth;
+		var height = data.height;
+		var width = data.width;
+
+		var entity = document.createElement('a-box');
+		entity.setAttribute( 'depth', data.depth);
+		entity.setAttribute( 'height', data.height);
+		entity.setAttribute( 'width', data.width);
+		this.el.appendChild(entity);
+
+		var boxes = JSON.parse(file);
+		for (let box of boxes) {
+			entity = document.createElement('a-box');
+			entity.setAttribute('databox', {
+			'depth': box['depth'],
+			'height': box['height'],
+			'width': box['width']
+			});
+			this.el.appendChild(entity);
+		};
+	},
+	  
   
 	/**
 	 * Called when a component is removed (e.g., via removeAttribute).
