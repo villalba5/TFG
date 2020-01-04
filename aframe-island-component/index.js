@@ -1,3 +1,5 @@
+import data from './file1.json';
+
 
 AFRAME.registerComponent('newisland', {
 	schema: {
@@ -5,7 +7,8 @@ AFRAME.registerComponent('newisland', {
 		height: {type: 'number', default: 1},
 		width: {type: 'number', default: 1},
         color: {type: 'color', default: '#FFFFFF'},
-        isfirst: {type: 'number', default: 0}
+		isfirst: {type: 'number', default: 0},
+		
 	},
   
 	/**
@@ -18,28 +21,9 @@ AFRAME.registerComponent('newisland', {
 	 */
 	init: function () {
 		var data = this.data;
-        var el = this.el;
-
-        if(data.isfirst != 0 && posx.toString() != NaN.toString()){
-            console.log("inicializo if");
-            
-            var posx = 2;
-            var posy = 0;
-            var posz = 0;
-        }else{
-            
-            if(posx == undefined){
-                console.log("inicializo else");
-                var posx = 2;
-                var posy = 0;
-                var posz = 0;
-            }
-            console.log("añado");
-            
-            posx = posx + 2;
-        }
-
-
+		var el = this.el;
+		
+		
         var scene = new THREE.Scene;
         
 
@@ -56,17 +40,13 @@ AFRAME.registerComponent('newisland', {
         el.setObject3D('mesh', mesh);
 
 
-        //scene.add(mesh);
+		//scene.add(mesh);
+		
+		console.log(this.data);
+		
         
 
         console.log("Pinto una caja");
-
-        console.log("Posición x : " + posx);
-
-        
-        
-        
-
 
 	 },
   
@@ -131,6 +111,9 @@ AFRAME.registerComponent('newisland', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
+
+		console.log('estoy ejecuntando index.js');
+		
 		var self = this;
 
 		this.loader = new THREE.FileLoader();
@@ -142,6 +125,8 @@ AFRAME.registerComponent('newisland', {
 	 * Generally modifies the entity based on the data.
 	 */
 	update: function (oldData) {
+		console.log('Entrando en update');
+		
 		var data = this.data;
 
 		if (data.databox && data.databox !== oldData.databox) {
@@ -151,9 +136,17 @@ AFRAME.registerComponent('newisland', {
 	 },
 
 	 onDataLoaded: function (file) {
+
+		console.log('entrando onDataLoaded');
+		
+
 		  // ... create box for each data
 		var self = this;
 		var data = this.data;
+
+		console.log(data);
+		
+
 		var depth = data.depth;
 		var height = data.height;
 		var width = data.width;
@@ -165,6 +158,10 @@ AFRAME.registerComponent('newisland', {
 		this.el.appendChild(entity);
 
 		var boxes = JSON.parse(file);
+
+		console.log(boxes);
+		
+
 		for (let box of boxes) {
 			entity = document.createElement('a-box');
 			entity.setAttribute('databox', {

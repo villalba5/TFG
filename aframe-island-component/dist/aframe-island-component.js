@@ -139,8 +139,9 @@ AFRAME.registerComponent('newisland', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
-		var data = this.data;
+		var data = this.schema;
 		var el = this.el;
+
 
 		this.geometry = new THREE.BoxBufferGeometry(data.width,data.height,data.depth);
 
@@ -212,6 +213,8 @@ AFRAME.registerComponent('newisland', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
+		console.log('estoy ejecutando el dist');
+		
 		var self = this;
 
 		this.loader = new THREE.FileLoader();
