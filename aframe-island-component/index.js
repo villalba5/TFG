@@ -1,4 +1,4 @@
-import data from './file1.json';
+//import data from './file1.json';
 
 
 AFRAME.registerComponent('newisland', {
