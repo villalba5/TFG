@@ -20,10 +20,34 @@ AFRAME.registerComponent('newisland', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
-		var data = this.data;
+		var data = this.schema;
 		var el = this.el;
 		
-		
+		try {
+			if(data.isfirst != 0){
+				console.log("inicializo if");
+				
+				var posx = 2;
+				var posy = 0;
+				var posz = 0;
+			}else{
+				if(posx == undefined){
+					console.log("inicializo else");
+					var posx = 2;
+					var posy = 0;
+					var posz = 0;
+				}
+				console.log("añado");
+				
+				posx = posx + 2;
+			}
+			
+		} catch (error) {
+			//Si paso por aqui es porque no se ha entrado ninguna vez
+		}
+        
+
+
         var scene = new THREE.Scene;
         
 
@@ -47,6 +71,13 @@ AFRAME.registerComponent('newisland', {
         
 
         console.log("Pinto una caja");
+
+        console.log("Posición x : " + posx);
+
+        
+        
+        
+
 
 	 },
   
@@ -162,15 +193,15 @@ AFRAME.registerComponent('newisland', {
 		console.log(boxes);
 		
 
-		for (let box of boxes) {
-			entity = document.createElement('a-box');
-			entity.setAttribute('databox', {
-			'depth': box['depth'],
-			'height': box['height'],
-			'width': box['width']
-			});
-			this.el.appendChild(entity);
-		};
+		// for (let box of boxes) {
+		// 	entity = document.createElement('a-box');
+		// 	entity.setAttribute('databox', {
+		// 	'depth': box['depth'],
+		// 	'height': box['height'],
+		// 	'width': box['width']
+		// 	});
+		// 	this.el.appendChild(entity);
+		// };
 	},
 	  
   
