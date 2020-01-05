@@ -7,14 +7,14 @@
   <body>
     <a-scene renderer="antialias: true" cursor="rayOrigin:mouse">
 
-      <a-sky color="grey"></a-sky>
+      <a-sky color="black"></a-sky>
       <a-light type="point" intensity="1" position="-2 10 10">
       </a-light>
 
-      <!-- <a-entity islands="databox: ../../../file1.json;">
-      </a-entity> -->
+      <a-entity islands="databox: ../../../file1.json;">
+      </a-entity>
 
-      <a-entity newisland="width: 2; height: 2; isfirst: 1"></a-entity>
+      <!-- <a-entity newisland="width: 2; height: 2; isfirst: 1"></a-entity> -->
       
       <a-entity movement-controls="fly: true" position="0 0 0">
         <a-entity camera position="0 1.6 0"></a-entity>

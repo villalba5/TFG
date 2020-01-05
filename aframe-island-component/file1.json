@@ -2,31 +2,31 @@
 {
     "id": "001",
     "width": "0.5",
+    "height": "2",
+    "depth": "2"
+},
+{
+    "id": "002",
+    "width": "3",
     "height": "4",
     "depth": "2"
 },
 {
-    "id": "001",
-    "width": "0.5",
+    "id": "003",
+    "width": "5",
     "height": "4",
+    "depth": "5"
+},
+{
+    "id": "004",
+    "width": "2",
+    "height": "2",
     "depth": "2"
 },
 {
-    "id": "001",
-    "width": "0.5",
-    "height": "4",
-    "depth": "2"
-},
-{
-    "id": "001",
-    "width": "0.5",
-    "height": "4",
-    "depth": "2"
-},
-{
-    "id": "001",
-    "width": "0.5",
-    "height": "4",
-    "depth": "2"
+    "id": "005",
+    "width": "3",
+    "height": "3",
+    "depth": "3"
 }
 ]

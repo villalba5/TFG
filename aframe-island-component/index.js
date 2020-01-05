@@ -20,14 +20,14 @@ AFRAME.registerComponent('newisland', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
-		var data = this.schema;
+		var data = this.data;
 		var el = this.el;
 		
 		try {
 			if(data.isfirst != 0){
 				console.log("inicializo if");
 				
-				var posx = 2;
+				var posx = 0;
 				var posy = 0;
 				var posz = 0;
 			}else{
@@ -37,7 +37,7 @@ AFRAME.registerComponent('newisland', {
 					var posy = 0;
 					var posz = 0;
 				}
-				console.log("añado");
+				console.log('sumo 2 a la x');
 				
 				posx = posx + 2;
 			}
@@ -47,21 +47,20 @@ AFRAME.registerComponent('newisland', {
 		}
         
 
+		this.geometry = new THREE.BoxBufferGeometry(data.width,data.height,data.depth);
 
-        var scene = new THREE.Scene;
+		this.material = new THREE.MeshStandardMaterial({color: data.color});
+
+        this.mesh = new THREE.Mesh(this.geometry,this.material);
         
 
-		var geometry = new THREE.BoxBufferGeometry(data.width,data.height,data.depth);
-
-		var material = new THREE.MeshStandardMaterial({color: data.color});
-
-        var mesh = new THREE.Mesh(geometry,material);
-        
-
-        mesh.position.set(posx,posy,posz);
+		this.mesh.position.set(posx,posy,posz);
+		console.log('pos x -> ' + posx);
+		console.log('pos y -> ' + posy);
+		console.log('pos z -> ' + posz);
 
 		// Set mesh on entity.
-        el.setObject3D('mesh', mesh);
+        el.setObject3D('mesh', this.mesh);
 
 
 		//scene.add(mesh);
@@ -71,13 +70,6 @@ AFRAME.registerComponent('newisland', {
         
 
         console.log("Pinto una caja");
-
-        console.log("Posición x : " + posx);
-
-        
-        
-        
-
 
 	 },
   
@@ -142,12 +134,16 @@ AFRAME.registerComponent('newisland', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
-
-		console.log('estoy ejecuntando index.js');
-		
 		var self = this;
 
 		this.loader = new THREE.FileLoader();
+		
+
+		var data = this.data;
+
+		if (data.databox) {
+			this.loader.load(data.databox, this.onDataLoaded.bind(this));
+		}
 	 },
 	
 
@@ -158,12 +154,6 @@ AFRAME.registerComponent('newisland', {
 	update: function (oldData) {
 		console.log('Entrando en update');
 		
-		var data = this.data;
-
-		if (data.databox && data.databox !== oldData.databox) {
-			this.loader.load(data.databox, this.onDataLoaded.bind(this));
-		  }
-
 	 },
 
 	 onDataLoaded: function (file) {
@@ -174,34 +164,41 @@ AFRAME.registerComponent('newisland', {
 		  // ... create box for each data
 		var self = this;
 		var data = this.data;
-
+		var scene = document.querySelector('a-scene');
 		console.log(data);
 		
-
-		var depth = data.depth;
-		var height = data.height;
-		var width = data.width;
-
-		var entity = document.createElement('a-box');
-		entity.setAttribute( 'depth', data.depth);
-		entity.setAttribute( 'height', data.height);
-		entity.setAttribute( 'width', data.width);
-		this.el.appendChild(entity);
-
 		var boxes = JSON.parse(file);
 
 		console.log(boxes);
 		
 
-		// for (let box of boxes) {
-		// 	entity = document.createElement('a-box');
-		// 	entity.setAttribute('databox', {
-		// 	'depth': box['depth'],
-		// 	'height': box['height'],
-		// 	'width': box['width']
-		// 	});
-		// 	this.el.appendChild(entity);
-		// };
+		boxes.forEach(function(box) {
+			console.log('<<<<<<<<< pintando nuevo box >>>>>>>>>>' );
+			console.log(box);
+			
+			
+			isfirst = 0;
+
+			var entity = document.createElement('a-entity');
+
+			if (box.id == '001') {
+				console.log('es el primero');
+				
+				isfirst = 1;
+			}
+
+			console.log(isfirst);
+			
+
+			entity.setAttribute('newisland', {
+				'color': 'blue',
+				'depth': box.depth,
+				'height': box.height,
+				'width': box.width,
+				'isfirst': isfirst
+			  });
+			  scene.appendChild(entity);
+		});
 	},
 	  
   

@@ -139,7 +139,7 @@ AFRAME.registerComponent('newisland', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
-		var data = this.schema;
+		var data = this.data;
 		var el = this.el;
 
 
