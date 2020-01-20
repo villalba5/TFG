@@ -6,9 +6,11 @@ AFRAME.registerComponent('newisland', {
 		depth: {type: 'number', default: 1},
 		height: {type: 'number', default: 1},
 		width: {type: 'number', default: 1},
-        color: {type: 'color', default: '#FFFFFF'},
-		isfirst: {type: 'number', default: 0},
-		
+        color: {type: 'color', default: '#00ffff'},
+		posx: {type: 'number', default: 0},
+		posy: {type: 'number', default: 0},
+		posz: {type: 'number', default: 0},
+		geometry : {type: 'string', default : 'box'}
 	},
   
 	/**
@@ -23,51 +25,37 @@ AFRAME.registerComponent('newisland', {
 		var data = this.data;
 		var el = this.el;
 		
-		try {
-			if(data.isfirst != 0){
-				console.log("inicializo if");
+		
+		switch (data.geometry) {
+			case 'box':
+				console.log('es un boxx');
 				
-				var posx = 0;
-				var posy = 0;
-				var posz = 0;
-			}else{
-				if(posx == undefined){
-					console.log("inicializo else");
-					var posx = 2;
-					var posy = 0;
-					var posz = 0;
-				}
-				console.log('sumo 2 a la x');
+				this.geometry = new THREE.BoxBufferGeometry(data.width,data.height,data.depth);
+				break;
+			case 'cylinder':
+				console.log('es un cyylinder');
 				
-				posx = posx + 2;
-			}
-			
-		} catch (error) {
-			//Si paso por aqui es porque no se ha entrado ninguna vez
+				radius = Math.sqrt((data.width*data.height)/3.1415);
+				console.log('radius : ' + radius);
+				
+				this.geometry = new THREE.CylinderBufferGeometry(radius,radius,data.height);
+				break;
+			default:
+				break;
 		}
-        
 
-		this.geometry = new THREE.BoxBufferGeometry(data.width,data.height,data.depth);
+		
 
 		this.material = new THREE.MeshStandardMaterial({color: data.color});
 
-        this.mesh = new THREE.Mesh(this.geometry,this.material);
-        
-
-		this.mesh.position.set(posx,posy,posz);
-		console.log('pos x -> ' + posx);
-		console.log('pos y -> ' + posy);
-		console.log('pos z -> ' + posz);
+		this.mesh = new THREE.Mesh(this.geometry,this.material);
+		
+		this.mesh.position.set(data.posx,data.posy,data.posz);
 
 		// Set mesh on entity.
         el.setObject3D('mesh', this.mesh);
-
-
-		//scene.add(mesh);
 		
 		console.log(this.data);
-		
-        
 
         console.log("Pinto una caja");
 
@@ -122,7 +110,10 @@ AFRAME.registerComponent('newisland', {
 		depth: {type: 'number', default: 1},
 		height: {type: 'number', default: 1},
 		width: {type: 'number', default: 1},
-		databox: {type: 'asset'}
+		databox: {type: 'asset'},
+		positioning : {type: 'string', default : 'random'},
+		geometry : {type: 'string', default : 'box'}
+
 	},
   
 	/**
@@ -134,11 +125,11 @@ AFRAME.registerComponent('newisland', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
-		var self = this;
+
+		//Load de json file
 
 		this.loader = new THREE.FileLoader();
 		
-
 		var data = this.data;
 
 		if (data.databox) {
@@ -152,56 +143,142 @@ AFRAME.registerComponent('newisland', {
 	 * Generally modifies the entity based on the data.
 	 */
 	update: function (oldData) {
-		console.log('Entrando en update');
 		
+	 },
+
+	 randompositions: function (boxes){
+
+		var scene = document.querySelector('a-scene');
+
+		boxes.forEach(function(box) {
+
+			var posx = Math.floor(Math.random() * 11)*Math.pow(-1,Math.floor(Math.random() * 2))
+			var posz = Math.floor(Math.random() * 11)*Math.pow(-1,Math.floor(Math.random() * 2))
+			
+			console.log('<<<<<<<<< pintando nuevo box >>>>>>>>>>' );
+			console.log(box);
+
+			var entity = document.createElement('a-entity');
+			
+			entity.setAttribute('newisland', {
+				'color': 'blue',
+				'depth': box.depth,
+				'height': box.height,
+				'width': box.width,
+				'posx' : posx,
+				'posz' : posz
+			  });
+			  scene.appendChild(entity);
+		});
+
+	 },
+
+	 fourincircle: function (boxes){
+		 //in this function i'm going to place the first box in the center and the next in concentric circles, 4 for circle
+
+		var scene = document.querySelector('a-scene');
+
+		const margin = 0.5
+
+		for (let index = 0; index < boxes.length; index++) {
+			const box = boxes[index];
+
+			numcircles = Math.ceil(boxes.length/4)
+
+			console.log('Numero de boxes : ' + boxes.length + ' Numero de circulos : ' + numcircles);
+
+
+			switch (index) { //the first box in the middle
+				case 0:
+					posx = 0
+					posz = 0
+					break;
+				case 1:
+					posx = 0
+
+					posz = boxes[0].depth/2 + margin + boxes[index].depth/2
+					break
+				case 2:
+					posz = 0
+
+					posx = -(boxes[0].width/2) - margin - boxes[index].width/2
+					break
+				case 3:
+					posx = 0
+
+					posz = -(boxes[0].depth/2) - margin - boxes[index].depth/2
+					break
+				case 4:
+					posz = 0
+
+					posx = (boxes[0].width/2) + margin + boxes[index].width/2
+					break
+			
+				default:
+					console.log('error en el switch de los index four in circle');
+					
+					break;
+			}
+
+			var entity = document.createElement('a-entity');
+
+			entity.emit('physicscollided', false);
+
+			
+			entity.setAttribute('newisland', {
+				'depth': box.depth,
+				'height': box.height,
+				'width': box.width,
+				'posx' : posx,
+				'posz' : posz
+			  });
+			  scene.appendChild(entity);
+		}
+
+
+		entity.addEventListener('physicscollided', function (event) {
+			console.log('Entity collided with', event.detail.collidingEntity);
+			//Ahora deberemos manejar la posición para que no choque con ninguno
+		  });
 	 },
 
 	 onDataLoaded: function (file) {
 
 		console.log('entrando onDataLoaded');
 		
+		// create box for each json objet
 
-		  // ... create box for each data
-		var self = this;
 		var data = this.data;
-		var scene = document.querySelector('a-scene');
+		
 		console.log(data);
 		
-		var boxes = JSON.parse(file);
+		var elements = JSON.parse(file);
 
-		console.log(boxes);
+		console.log(elements);
 		
 
-		boxes.forEach(function(box) {
-			console.log('<<<<<<<<< pintando nuevo box >>>>>>>>>>' );
-			console.log(box);
-			
-			
-			isfirst = 0;
 
-			var entity = document.createElement('a-entity');
-
-			if (box.id == '001') {
-				console.log('es el primero');
+		switch (data.geometry) {
+			case "cylinder":
+				console.log('es un cylinder!!');
 				
-				isfirst = 1;
-			}
+				printCylinders(elements, data.positioning)
+				break;
+		
+			default:
+				console.log('no es un cylinder');
+				
+				printBoxes(elements, data.positioning)
+				break;
+		}
+		
 
-			console.log(isfirst);
-			
+		
+		
 
-			entity.setAttribute('newisland', {
-				'color': 'blue',
-				'depth': box.depth,
-				'height': box.height,
-				'width': box.width,
-				'isfirst': isfirst
-			  });
-			  scene.appendChild(entity);
-		});
+		
 	},
-	  
-  
+
 	/**
 	 * Called when a component is removed (e.g., via removeAttribute).
 	 * Generally undoes all modifications to the entity.
@@ -229,7 +306,79 @@ AFRAME.registerComponent('newisland', {
 	 * Event handlers that automatically get attached or detached based on scene state.
 	 */
 	events: {
-	  // click: function (evt) { }
+	   click: function (evt) {
+		console.log('This entity was clicked!');
+		this.el.setAttribute('material', 'color', 'red');
+	    }
 	}
   });
-  
+
+  function printBoxes(boxes, positioning) {
+	console.log(boxes, positioning);
+	switch (positioning) {
+		case 'random':
+			console.log('es raaaandom');
+			
+			this.randompositions(boxes);
+			break;
+		case 'four':
+			console.log('es four');
+			
+
+			this.fourincircle(boxes);
+			break;
+	
+		default:
+			break;
+	}
+	
+}
+
+function printCylinders (cylinders, positioning){
+	console.log(cylinders, positioning);
+
+	switch (positioning) {
+		case 'random':
+			console.log('es raaaandom cylinders');
+			
+			this.randomPositionsCylinders(cylinders);
+			break;
+		case 'four':
+			console.log('es four');
+			
+
+			this.fourincircleCylinders(cylinders);
+			break;
+	
+		default:
+			break;
+	}
+}
+
+function randomPositionsCylinders(cylinders){
+
+	var scene = document.querySelector('a-scene');
+
+	cylinders.forEach(function(cylinder) {
+
+		var posx = Math.floor(Math.random() * 11)*Math.pow(-1,Math.floor(Math.random() * 2))
+		var posz = Math.floor(Math.random() * 11)*Math.pow(-1,Math.floor(Math.random() * 2))
+		
+		console.log('<<<<<<<<< pintando nuevo cylinder >>>>>>>>>>' );
+		console.log(cylinder);
+
+		var entity = document.createElement('a-entity');
+		
+		entity.setAttribute('newisland', {
+			'color': 'blue',
+			'depth': cylinder.depth,
+			'height': cylinder.height,
+			'width': cylinder.width,
+			'posx' : posx,
+			'posz' : posz,
+			'geometry' : 'cylinder'
+		  });
+		  scene.appendChild(entity);
+	});
+
+ }
