@@ -146,102 +146,6 @@ AFRAME.registerComponent('newisland', {
 		
 	 },
 
-	 randompositions: function (boxes){
-
-		var scene = document.querySelector('a-scene');
-
-		boxes.forEach(function(box) {
-
-			var posx = Math.floor(Math.random() * 11)*Math.pow(-1,Math.floor(Math.random() * 2))
-			var posz = Math.floor(Math.random() * 11)*Math.pow(-1,Math.floor(Math.random() * 2))
-			
-			console.log('<<<<<<<<< pintando nuevo box >>>>>>>>>>' );
-			console.log(box);
-
-			var entity = document.createElement('a-entity');
-			
-			entity.setAttribute('newisland', {
-				'color': 'blue',
-				'depth': box.depth,
-				'height': box.height,
-				'width': box.width,
-				'posx' : posx,
-				'posz' : posz
-			  });
-			  scene.appendChild(entity);
-		});
-
-	 },
-
-	 fourincircle: function (boxes){
-		 //in this function i'm going to place the first box in the center and the next in concentric circles, 4 for circle
-
-		var scene = document.querySelector('a-scene');
-
-		const margin = 0.5
-
-		for (let index = 0; index < boxes.length; index++) {
-			const box = boxes[index];
-
-			numcircles = Math.ceil(boxes.length/4)
-
-			console.log('Numero de boxes : ' + boxes.length + ' Numero de circulos : ' + numcircles);
-
-
-			switch (index) { //the first box in the middle
-				case 0:
-					posx = 0
-					posz = 0
-					break;
-				case 1:
-					posx = 0
-
-					posz = boxes[0].depth/2 + margin + boxes[index].depth/2
-					break
-				case 2:
-					posz = 0
-
-					posx = -(boxes[0].width/2) - margin - boxes[index].width/2
-					break
-				case 3:
-					posx = 0
-
-					posz = -(boxes[0].depth/2) - margin - boxes[index].depth/2
-					break
-				case 4:
-					posz = 0
-
-					posx = (boxes[0].width/2) + margin + boxes[index].width/2
-					break
-			
-				default:
-					console.log('error en el switch de los index four in circle');
-					
-					break;
-			}
-
-			var entity = document.createElement('a-entity');
-
-			entity.emit('physicscollided', false);
-
-			
-			entity.setAttribute('newisland', {
-				'depth': box.depth,
-				'height': box.height,
-				'width': box.width,
-				'posx' : posx,
-				'posz' : posz
-			  });
-			  scene.appendChild(entity);
-		}
-
-
-		entity.addEventListener('physicscollided', function (event) {
-			console.log('Entity collided with', event.detail.collidingEntity);
-			//Ahora deberemos manejar la posición para que no choque con ninguno
-		  });
-	 },
-
 	 onDataLoaded: function (file) {
 
 		console.log('entrando onDataLoaded');
@@ -271,12 +175,6 @@ AFRAME.registerComponent('newisland', {
 				printBoxes(elements, data.positioning)
 				break;
 		}
-		
-
-		
-		
-
-		
 	},
 
 	/**
@@ -319,13 +217,11 @@ AFRAME.registerComponent('newisland', {
 		case 'random':
 			console.log('es raaaandom');
 			
-			this.randompositions(boxes);
+			this.BoxesRandomPositions(boxes);
 			break;
 		case 'four':
 			console.log('es four');
-			
-
-			this.fourincircle(boxes);
+			this.BoxesFourInCircle(boxes);
 			break;
 	
 		default:
@@ -377,6 +273,103 @@ function randomPositionsCylinders(cylinders){
 			'posx' : posx,
 			'posz' : posz,
 			'geometry' : 'cylinder'
+		  });
+		  scene.appendChild(entity);
+	});
+
+ }
+
+
+ function fourincircle (boxes){
+	//in this function i'm going to place the first box in the center and the next in concentric circles, 4 for circle
+
+   var scene = document.querySelector('a-scene');
+
+   const margin = 0.5
+
+   for (let index = 0; index < boxes.length; index++) {
+	   const box = boxes[index];
+
+	   numcircles = Math.ceil(boxes.length/4)
+
+	   console.log('Numero de boxes : ' + boxes.length + ' Numero de circulos : ' + numcircles);
+
+
+	   switch (index) { //the first box in the middle
+		   case 0:
+			   posx = 0
+			   posz = 0
+			   break;
+		   case 1:
+			   posx = 0
+
+			   posz = boxes[0].depth/2 + margin + boxes[index].depth/2
+			   break
+		   case 2:
+			   posz = 0
+
+			   posx = -(boxes[0].width/2) - margin - boxes[index].width/2
+			   break
+		   case 3:
+			   posx = 0
+
+			   posz = -(boxes[0].depth/2) - margin - boxes[index].depth/2
+			   break
+		   case 4:
+			   posz = 0
+
+			   posx = (boxes[0].width/2) + margin + boxes[index].width/2
+			   break
+	   
+		   default:
+			   console.log('error en el switch de los index four in circle');
+			   
+			   break;
+	   }
+
+	   var entity = document.createElement('a-entity');
+
+	   entity.emit('physicscollided', false);
+
+	   
+	   entity.setAttribute('newisland', {
+		   'depth': box.depth,
+		   'height': box.height,
+		   'width': box.width,
+		   'posx' : posx,
+		   'posz' : posz
+		 });
+		 scene.appendChild(entity);
+   }
+
+
+   entity.addEventListener('physicscollided', function (event) {
+	   console.log('Entity collided with', event.detail.collidingEntity);
+	   //Ahora deberemos manejar la posición para que no choque con ninguno
+	 });
+} 
+
+function BoxesRandomPositions (boxes){
+
+	var scene = document.querySelector('a-scene');
+
+	boxes.forEach(function(box) {
+
+		var posx = Math.floor(Math.random() * 11)*Math.pow(-1,Math.floor(Math.random() * 2))
+		var posz = Math.floor(Math.random() * 11)*Math.pow(-1,Math.floor(Math.random() * 2))
+		
+		console.log('<<<<<<<<< pintando nuevo box >>>>>>>>>>' );
+		console.log(box);
+
+		var entity = document.createElement('a-entity');
+		
+		entity.setAttribute('newisland', {
+			'color': 'blue',
+			'depth': box.depth,
+			'height': box.height,
+			'width': box.width,
+			'posx' : posx,
+			'posz' : posz
 		  });
 		  scene.appendChild(entity);
 	});
