@@ -235,11 +235,11 @@ function printCylinders(cylinders, positioning) {
 		case 'random':
 			console.log('es raaaandom');
 			
-			this.BoxesRandomPositions(cylinders);
+			this.CylinderRandomPositions(cylinders);
 			break;
 		case 'four':
 			console.log('es four');
-			this.BoxesFourInCircle(cylinders);
+			this.CylinderFourInCircle(cylinders);
 			break;
 	
 		default:
@@ -391,4 +391,8 @@ function BoxesRandomPositions (boxes){
 		  scene.appendChild(entity);
 	});
 
+ }
+
+ function CylinderFourInCircle(cylinders) {
+	 console.log(cylinders);
  }
