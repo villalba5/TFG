@@ -227,7 +227,24 @@ AFRAME.registerComponent('newisland', {
 		default:
 			break;
 	}
+}
+
+function printCylinders(cylinders, positioning) {
+	console.log(cylinders, positioning);
+	switch (positioning) {
+		case 'random':
+			console.log('es raaaandom');
+			
+			this.BoxesRandomPositions(cylinders);
+			break;
+		case 'four':
+			console.log('es four');
+			this.BoxesFourInCircle(cylinders);
+			break;
 	
+		default:
+			break;
+	}
 }
 
 function printCylinders (cylinders, positioning){
@@ -280,7 +297,7 @@ function randomPositionsCylinders(cylinders){
  }
 
 
- function fourincircle (boxes){
+ function BoxesFourInCircle (boxes){
 	//in this function i'm going to place the first box in the center and the next in concentric circles, 4 for circle
 
    var scene = document.querySelector('a-scene');
