@@ -1,4 +1,4 @@
-//import data from './file1.json';
+
 
 
 AFRAME.registerComponent('newisland', {
@@ -25,8 +25,7 @@ AFRAME.registerComponent('newisland', {
 		var data = this.data;
 		var el = this.el;
 		
-		
-		switch (data.geometry) {
+		switch (data.geometry) { //in this switch i detect the geometry that i want to representate
 			case 'box':
 				console.log('es un boxx');
 				
@@ -34,7 +33,6 @@ AFRAME.registerComponent('newisland', {
 				break;
 			case 'cylinder':
 				console.log('es un cyylinder');
-				
 				radius = Math.sqrt((data.width*data.height)/3.1415);
 				console.log('radius : ' + radius);
 				
@@ -44,21 +42,14 @@ AFRAME.registerComponent('newisland', {
 				break;
 		}
 
-		
-
 		this.material = new THREE.MeshStandardMaterial({color: data.color});
-
 		this.mesh = new THREE.Mesh(this.geometry,this.material);
-		
 		this.mesh.position.set(data.posx,data.posy,data.posz);
 
 		// Set mesh on entity.
         el.setObject3D('mesh', this.mesh);
-		
 		console.log(this.data);
-
         console.log("Pinto una caja");
-
 	 },
   
 	/**
@@ -129,7 +120,6 @@ AFRAME.registerComponent('newisland', {
 		//Load de json file
 
 		this.loader = new THREE.FileLoader();
-		
 		var data = this.data;
 
 		if (data.databox) {
@@ -146,7 +136,7 @@ AFRAME.registerComponent('newisland', {
 		
 	 },
 
-	 onDataLoaded: function (file) {
+	 onDataLoaded: function (file) { //in this function i parse the json file and get the objects that i will represent
 
 		console.log('entrando onDataLoaded');
 		
@@ -160,8 +150,7 @@ AFRAME.registerComponent('newisland', {
 
 		console.log(elements);
 		
-
-
+		
 		switch (data.geometry) {
 			case "cylinder":
 				console.log('es un cylinder!!');
@@ -253,13 +242,10 @@ function printCylinders (cylinders, positioning){
 	switch (positioning) {
 		case 'random':
 			console.log('es raaaandom cylinders');
-			
 			this.randomPositionsCylinders(cylinders);
 			break;
 		case 'four':
 			console.log('es four');
-			
-
 			this.fourincircleCylinders(cylinders);
 			break;
 	
@@ -301,16 +287,12 @@ function randomPositionsCylinders(cylinders){
 	//in this function i'm going to place the first box in the center and the next in concentric circles, 4 for circle
 
    var scene = document.querySelector('a-scene');
-
-   const margin = 0.5
+   const margin = 0.1
 
    for (let index = 0; index < boxes.length; index++) {
 	   const box = boxes[index];
-
 	   numcircles = Math.ceil(boxes.length/4)
-
 	   console.log('Numero de boxes : ' + boxes.length + ' Numero de circulos : ' + numcircles);
-
 
 	   switch (index) { //the first box in the middle
 		   case 0:
@@ -319,36 +301,28 @@ function randomPositionsCylinders(cylinders){
 			   break;
 		   case 1:
 			   posx = 0
-
 			   posz = boxes[0].depth/2 + margin + boxes[index].depth/2
 			   break
 		   case 2:
 			   posz = 0
-
 			   posx = -(boxes[0].width/2) - margin - boxes[index].width/2
 			   break
 		   case 3:
 			   posx = 0
-
 			   posz = -(boxes[0].depth/2) - margin - boxes[index].depth/2
 			   break
 		   case 4:
 			   posz = 0
-
 			   posx = (boxes[0].width/2) + margin + boxes[index].width/2
 			   break
-	   
 		   default:
 			   console.log('error en el switch de los index four in circle');
-			   
 			   break;
 	   }
-
 	   var entity = document.createElement('a-entity');
 
 	   entity.emit('physicscollided', false);
 
-	   
 	   entity.setAttribute('newisland', {
 		   'depth': box.depth,
 		   'height': box.height,
@@ -358,7 +332,6 @@ function randomPositionsCylinders(cylinders){
 		 });
 		 scene.appendChild(entity);
    }
-
 
    entity.addEventListener('physicscollided', function (event) {
 	   console.log('Entity collided with', event.detail.collidingEntity);
@@ -393,6 +366,61 @@ function BoxesRandomPositions (boxes){
 
  }
 
- function CylinderFourInCircle(cylinders) {
-	 console.log(cylinders);
+ function fourincircleCylinders(cylinders) {
+	console.log(cylinders);
+	var scene = document.querySelector('a-scene');
+	const margin = 0.1
+	numcircles = Math.ceil(cylinders.length/4)
+	console.log('Numero de cylinders : ' + cylinders.length + ' Numero de circulos : ' + numcircles);
+
+	radius = []
+
+   for (let index = 0; index < cylinders.length; index++) {
+	   const cylinder = cylinders[index];
+	   radius.push(Math.sqrt((cylinders[index].width*cylinders[index].height)/3.1415)); //Array os radius
+	   
+	   switch (index) { //the first cylinder in the middle
+		   case 0:
+			   posx = 0
+			   posz = 0
+			   break;
+		   case 1:
+			   posx = 0
+			   posz = radius[0] + margin + radius[index]
+			   break
+		   case 2:
+			   posz = 0
+			   posx = -(radius[0]) - margin - radius[index]
+			   break
+		   case 3:
+			   posx = 0
+			   posz = -(radius[0]) - margin - radius[index]
+			   break
+		   case 4:
+			   posz = 0
+			   posx = radius[0] + margin + radius[index]
+			   break
+		   default:
+			   console.log('error en el switch de los index four in circle');
+			   break;
+	   }
+	   var entity = document.createElement('a-entity');
+
+	   entity.emit('physicscollided', false);
+
+	   entity.setAttribute('newisland', {
+		   'depth': cylinder.depth,
+		   'height': cylinder.height,
+		   'width': cylinder.width,
+		   'posx' : posx,
+		   'posz' : posz,
+		   'geometry' : 'cylinder'
+		 });
+		 scene.appendChild(entity);
+   }
+
+   entity.addEventListener('physicscollided', function (event) {
+	   console.log('Entity collided with', event.detail.collidingEntity);
+	   //Ahora deberemos manejar la posición para que no choque con ninguno
+	 });
  }

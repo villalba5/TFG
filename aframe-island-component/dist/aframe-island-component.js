@@ -1,4 +1,3 @@
-//import data from './data.json';
 
 
 (function webpackUniversalModuleDefinition(root, factory) {
