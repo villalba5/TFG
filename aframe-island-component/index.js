@@ -44,12 +44,12 @@ AFRAME.registerComponent('newisland', {
 
 		this.material = new THREE.MeshStandardMaterial({ color: data.color });
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
-		this.mesh.position.set(data.posx, data.posy, data.posz);
+		this.mesh.position.set(data.posx, data.height/2, data.posz);
 
 		// Set mesh on entity.
 		el.setObject3D('mesh', this.mesh);
 		console.log(this.data);
-		console.log("Pinto una caja");
+		console.log("Pinto una caja",data.posx, ',', data.posz);
 	},
 
 	/**
@@ -57,7 +57,6 @@ AFRAME.registerComponent('newisland', {
 	 * Generally modifies the entity based on the data.
 	 */
 	update: function (oldData) {
-		console.log("update");
 
 	},
 
@@ -95,7 +94,6 @@ AFRAME.registerComponent('newisland', {
 
 
 AFRAME.registerComponent('islands', {
-
 	schema: {
 		id: { type: 'number', default: Math.floor(Math.random() * 1000000) + 1 }, //random number between 1 and 1.000.000
 		depth: { type: 'number', default: 1 },
@@ -104,7 +102,6 @@ AFRAME.registerComponent('islands', {
 		databox: { type: 'asset' },
 		positioning: { type: 'string', default: 'random' },
 		geometry: { type: 'string', default: 'box' }
-
 	},
 
 	/**
@@ -116,25 +113,18 @@ AFRAME.registerComponent('islands', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
-
 		//Load de json file
-
 		this.loader = new THREE.FileLoader();
 		var data = this.data;
-
 		if (data.databox) {
 			this.loader.load(data.databox, this.onDataLoaded.bind(this));
 		}
 	},
 
-
 	/**
 	 * Called when component is attached and when component data changes.
 	 * Generally modifies the entity based on the data.
 	 */
-	update: function (oldData) {
-
-	},
 
 	onDataLoaded: function (file) { //in this function i parse the json file and get the objects that i will represent
 
@@ -143,20 +133,15 @@ AFRAME.registerComponent('islands', {
 		// create box for each json objet
 
 		var data = this.data;
-
 		console.log(data);
-
 		var elements = JSON.parse(file);
-
 		console.log(elements);
-
 
 		switch (data.geometry) {
 			case "cylinder":
 				console.log('es un cylinder!!');
 				printCylinders(elements, data.positioning)
 				break;
-
 			default:
 				console.log('no es un cylinder');
 				printBoxes(elements, data.positioning)
@@ -213,7 +198,9 @@ function printBoxes(boxes, positioning) {
 			console.log('es near');
 			BoxesNear(boxes);
 			break;
-
+		case 'much':
+			console.log('es much');
+			BoxesConcentric(boxes);
 		default:
 			break;
 	}
@@ -387,8 +374,6 @@ function fourincircleCylinders(cylinders) {
 		}
 		var entity = document.createElement('a-entity');
 
-		entity.emit('physicscollided', false);
-
 		entity.setAttribute('newisland', {
 			'depth': cylinder.depth,
 			'height': cylinder.height,
@@ -399,15 +384,114 @@ function fourincircleCylinders(cylinders) {
 		});
 		scene.appendChild(entity);
 	}
-
-	function BoxesNear(parboxesams) {
-		//Algoritm to push nearest of the center
-		console.log('BoxesNEar');
-		
-	}
-
-	entity.addEventListener('physicscollided', function (event) {
-		console.log('Entity collided with', event.detail.collidingEntity);
-		//Ahora deberemos manejar la posición para que no choque con ninguno
-	});
 }
+
+function BoxesNear(parboxesams) {
+	//Algoritm to push nearest of the center
+	console.log('BoxesNEar');
+	
+}
+
+function BoxesConcentric(boxes) {
+	console.log('boxes concentric');
+
+	var scene = document.querySelector('a-scene');
+	var lado = boxes[0].width;
+
+	var e1 = { //upper right
+		posx :0,
+		posz : 0
+	}
+	var e2 = { //down right
+		posx : 0,
+		posz : 0
+	}
+	var e3 = { //down left
+		posx : 0,
+		posz : 0
+	}
+	var e4 = { // upper left
+		posx : 0,
+		posz : 0
+	}
+	firstcircle = true;
+
+	for (let i = 0; i < 9; i++) {
+		const box = boxes[i];
+		color = '#00ffff'
+		if (firstcircle) {
+			if (i==0) {
+				posx = 0
+				posz = 0
+				color = 'red'
+			}else{
+				if (Math.abs(e2.posx) < lado) {					
+					posz = lado/2 + box.width/2;
+					e2.posz = lado/2 + box.width;
+					if (e2.posx == 0) { //only the first time
+						posx = lado/2 - box.width/2
+						e2.posx = posx - box.width/2
+					}else{
+						posx = e2.posx - box.width/2
+						e2.posx = posx - box.width/2
+					}
+				}else if(Math.abs(e3.posz)<=lado/2){
+					if (e3.posx == 0) {
+						posx = -lado/2 -box.width/2
+						posz = lado/2 -box.width/2 
+						e3.posz = posz - box.width/2
+						e3.posx = posx - box.width/2
+					}else{
+						posx = -lado/2 -box.width/2
+						posz = e3.posz -box.width/2 
+						e3.posz = posz - box.width/2
+						e3.posx = posx - box.width/2
+					}
+				}else if(Math.abs(e4.posx)<=lado/2){	
+					console.log(i,'iiiiiiii');
+					posz = -lado/2 - box.width/2
+					if (e4.posx == 0) {
+						console.log('entra if');
+						
+						 //only first time
+						 posx = box.width/2-lado/2 
+						 e4.posx = box.width - lado/2
+						 e4.posz = -lado - box.width
+						 console.log(e4.posx);
+						 
+					} else {
+						console.log('entra else');
+						
+						posx = e4.posx + box.width/2
+						console.log(e4.posx);
+						
+						e4.posx = e4.posx + box.width
+						e4.posz = -lado - box.width3
+					}
+				}else if(Math.abs(e1.posx)<=lado/2){
+					posx = lado/2 + box.width/23
+					if (e1.posx == 0) { //only the first time3
+						posz = lado - box.width/2
+					}
+					
+					
+					
+				}
+			}
+		}
+
+		
+	
+		var entity = document.createElement('a-entity');
+
+		entity.setAttribute('newisland', {
+			'depth': box.depth,
+			'height': box.height,
+			'width': box.width,
+			'posx': posx,
+			'posz': posz,
+			'color': color,
+		});
+		scene.appendChild(entity);
+	}
+} 
