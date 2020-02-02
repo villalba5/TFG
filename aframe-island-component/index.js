@@ -439,10 +439,8 @@ function BoxesConcentric(boxes) {
 				if (e2.posx == 0) { //only the first time
 					posx = lado / 2 - box.width / 2
 					e2.posx = posx - box.width / 2
-					
 				} else {
 					posx = e2.posx - box.width / 2
-					
 				}
 				e2.posz = lado / 2 + box.width;
 				e2.posx = posx - box.width / 2
@@ -468,7 +466,7 @@ function BoxesConcentric(boxes) {
 					len : box.width,
 				}
 				bottom.push(objpush)
-			} else if (Math.abs(e4.posx) <= lado / 2) {
+			} else if ((e4.posx) <= lado / 2) {
 				posz = -lado / 2 - box.width / 2
 				if (e4.posx == 0) {
 					//only first time
@@ -476,7 +474,7 @@ function BoxesConcentric(boxes) {
 					e4.posx = box.width - lado / 2
 				} else {
 					posx = e4.posx + box.width / 2
-					e4.posx = e4.posx + box.width
+					e4.posx = box.width + e4.posx 
 				}
 				e4.posz = -lado - box.width
 				objpush = {
@@ -486,11 +484,9 @@ function BoxesConcentric(boxes) {
 				}
 				left.push(objpush)
 			} else if (Math.abs(e1.posz) <= lado / 2) {
-				console.log(e1.posx);
-
 				posx = lado / 2 + box.width / 2
 				if (e1.posx == 0) { //only the first time3
-					posz = lado / 2 - box.width / 2
+					posz = -lado / 2 + box.width / 2
 				} else {
 					posz = e1.posz + box.width / 2
 				}
@@ -512,24 +508,21 @@ function BoxesConcentric(boxes) {
 				
 				
 				for (let j = 0; j < right.length; j++) {
-					console.log(right[j].len);
-					console.log(box.width);
-					
-					
-					if (right[j].len >= box.width) { //fits
-						console.log('paso if');
-						
+					if (right[j].len == box.width) { //fits						
 						posx = right[j].x
 						posz =  right[j].z + right[j].len/2 + box.width/2
 						right.splice(j,1) //remove the item used
 						break
+					}else if (right[j].len > box.width) {
+						posx = right[j].x + right[j].len/2 - box.width/2
+						posz =  right[j].z + right[j].len/2 + box.width/2
+						right[j].x = right[j].x - right[j].len/4
+						right.splice(j,1) //remove the item used
+						break
+					}else{
+						console.log('ningunoi encaja');
 					}
 				}
-				console.log(posx);
-
-				console.log(posz);
-				
-				
 			}
 
 		}
