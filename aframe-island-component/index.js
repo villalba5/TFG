@@ -27,14 +27,14 @@ AFRAME.registerComponent('newisland', {
 
 		switch (data.geometry) { //in this switch i detect the geometry that i want to representate
 			case 'box':
-				console.log('es un boxx');
+				//console.log('es un boxx');
 
 				this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
 				break;
 			case 'cylinder':
-				console.log('es un cyylinder');
+				//console.log('es un cyylinder');
 				radius = Math.sqrt((data.width * data.height) / 3.1415);
-				console.log('radius : ' + radius);
+				//console.log('radius : ' + radius);
 
 				this.geometry = new THREE.CylinderBufferGeometry(radius, radius, data.height);
 				break;
@@ -44,12 +44,12 @@ AFRAME.registerComponent('newisland', {
 
 		this.material = new THREE.MeshStandardMaterial({ color: data.color });
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
-		this.mesh.position.set(data.posx, data.height/2, data.posz);
+		this.mesh.position.set(data.posx, data.height / 2, data.posz);
 
 		// Set mesh on entity.
 		el.setObject3D('mesh', this.mesh);
-		console.log(this.data);
-		console.log("Pinto una caja",data.posx, ',', data.posz);
+		//console.log(this.data);
+		//console.log("Pinto una caja",data.posx, ',', data.posz);
 	},
 
 	/**
@@ -133,17 +133,17 @@ AFRAME.registerComponent('islands', {
 		// create box for each json objet
 
 		var data = this.data;
-		console.log(data);
+		//console.log(data);
 		var elements = JSON.parse(file);
-		console.log(elements);
+		//console.log(elements);
 
 		switch (data.geometry) {
 			case "cylinder":
-				console.log('es un cylinder!!');
+				//console.log('es un cylinder!!');
 				printCylinders(elements, data.positioning)
 				break;
 			default:
-				console.log('no es un cylinder');
+				//console.log('no es un cylinder');
 				printBoxes(elements, data.positioning)
 				break;
 		}
@@ -187,19 +187,19 @@ function printBoxes(boxes, positioning) {
 	console.log(boxes, positioning);
 	switch (positioning) {
 		case 'random':
-			console.log('es raaaandom');
+			//console.log('es raaaandom');
 			BoxesRandomPositions(boxes);
 			break;
 		case 'four':
-			console.log('es four');
+			//console.log('es four');
 			BoxesFourInCircle(boxes);
 			break;
 		case 'near':
-			console.log('es near');
+			//console.log('es near');
 			BoxesNear(boxes);
 			break;
 		case 'much':
-			console.log('es much');
+			//console.log('es much');
 			BoxesConcentric(boxes);
 		default:
 			break;
@@ -210,11 +210,11 @@ function printCylinders(cylinders, positioning) {
 	console.log(cylinders, positioning);
 	switch (positioning) {
 		case 'random':
-			console.log('es raaaandom');
+			//console.log('es raaaandom');
 			this.randomPositionsCylinders(cylinders);
 			break;
 		case 'four':
-			console.log('es four');
+			//console.log('es four');
 			this.fourincircleCylinders(cylinders);
 			break;
 
@@ -232,8 +232,8 @@ function randomPositionsCylinders(cylinders) {
 		var posx = Math.floor(Math.random() * 11) * Math.pow(-1, Math.floor(Math.random() * 2))
 		var posz = Math.floor(Math.random() * 11) * Math.pow(-1, Math.floor(Math.random() * 2))
 
-		console.log('<<<<<<<<< pintando nuevo cylinder >>>>>>>>>>');
-		console.log(cylinder);
+		//console.log('<<<<<<<<< pintando nuevo cylinder >>>>>>>>>>');
+		//console.log(cylinder);
 
 		var entity = document.createElement('a-entity');
 
@@ -260,7 +260,7 @@ function BoxesFourInCircle(boxes) {
 	for (let index = 0; index < boxes.length; index++) {
 		const box = boxes[index];
 		numcircles = Math.ceil(boxes.length / 4)
-		console.log('Numero de boxes : ' + boxes.length + ' Numero de circulos : ' + numcircles);
+		//console.log('Numero de boxes : ' + boxes.length + ' Numero de circulos : ' + numcircles);
 
 		switch (index) { //the first box in the middle
 			case 0:
@@ -316,8 +316,8 @@ function BoxesRandomPositions(boxes) {
 		var posx = Math.floor(Math.random() * 11) * Math.pow(-1, Math.floor(Math.random() * 2))
 		var posz = Math.floor(Math.random() * 11) * Math.pow(-1, Math.floor(Math.random() * 2))
 
-		console.log('<<<<<<<<< pintando nuevo box >>>>>>>>>>');
-		console.log(box);
+		//console.log('<<<<<<<<< pintando nuevo box >>>>>>>>>>');
+		//console.log(box);
 
 		var entity = document.createElement('a-entity');
 
@@ -335,11 +335,11 @@ function BoxesRandomPositions(boxes) {
 }
 
 function fourincircleCylinders(cylinders) {
-	console.log(cylinders);
+	//console.log(cylinders);
 	var scene = document.querySelector('a-scene');
 	const margin = 0.1
 	numcircles = Math.ceil(cylinders.length / 4)
-	console.log('Numero de cylinders : ' + cylinders.length + ' Numero de circulos : ' + numcircles);
+	//console.log('Numero de cylinders : ' + cylinders.length + ' Numero de circulos : ' + numcircles);
 
 	radius = []
 
@@ -388,100 +388,157 @@ function fourincircleCylinders(cylinders) {
 
 function BoxesNear(parboxesams) {
 	//Algoritm to push nearest of the center
-	console.log('BoxesNEar');
-	
+	//console.log('BoxesNear');
+
 }
 
 function BoxesConcentric(boxes) {
-	console.log('boxes concentric');
+	//console.log('boxes concentric');
 
 	var scene = document.querySelector('a-scene');
 	var lado = boxes[0].width;
 
 	var e1 = { //upper right
-		posx :0,
-		posz : 0
+		posx: 0,
+		posz: 0
 	}
 	var e2 = { //down right
-		posx : 0,
-		posz : 0
+		posx: 0,
+		posz: 0
 	}
 	var e3 = { //down left
-		posx : 0,
-		posz : 0
+		posx: 0,
+		posz: 0
 	}
 	var e4 = { // upper left
-		posx : 0,
-		posz : 0
+		posx: 0,
+		posz: 0
 	}
+
+	//i have one list for each side, one for the rigth, other for the left, other for the top and other for the bottom side.
+	//in each array, i save an object that have the position x and y and the length of the segment
+
+	var right = []
+	var left = []
+	var top = []
+	var bottom = []
+
 	firstcircle = true;
 
-	for (let i = 0; i < 9; i++) {
+	for (let i = 0; i < 12; i++) {
 		const box = boxes[i];
 		color = '#00ffff'
-		if (firstcircle) {
-			if (i==0) {
-				posx = 0
-				posz = 0
-				color = 'red'
-			}else{
-				if (Math.abs(e2.posx) < lado) {					
-					posz = lado/2 + box.width/2;
-					e2.posz = lado/2 + box.width;
-					if (e2.posx == 0) { //only the first time
-						posx = lado/2 - box.width/2
-						e2.posx = posx - box.width/2
-					}else{
-						posx = e2.posx - box.width/2
-						e2.posx = posx - box.width/2
-					}
-				}else if(Math.abs(e3.posz)<=lado/2){
-					if (e3.posx == 0) {
-						posx = -lado/2 -box.width/2
-						posz = lado/2 -box.width/2 
-						e3.posz = posz - box.width/2
-						e3.posx = posx - box.width/2
-					}else{
-						posx = -lado/2 -box.width/2
-						posz = e3.posz -box.width/2 
-						e3.posz = posz - box.width/2
-						e3.posx = posx - box.width/2
-					}
-				}else if(Math.abs(e4.posx)<=lado/2){	
-					console.log(i,'iiiiiiii');
-					posz = -lado/2 - box.width/2
-					if (e4.posx == 0) {
-						console.log('entra if');
-						
-						 //only first time
-						 posx = box.width/2-lado/2 
-						 e4.posx = box.width - lado/2
-						 e4.posz = -lado - box.width
-						 console.log(e4.posx);
-						 
-					} else {
-						console.log('entra else');
-						
-						posx = e4.posx + box.width/2
-						console.log(e4.posx);
-						
-						e4.posx = e4.posx + box.width
-						e4.posz = -lado - box.width3
-					}
-				}else if(Math.abs(e1.posx)<=lado/2){
-					posx = lado/2 + box.width/23
-					if (e1.posx == 0) { //only the first time3
-						posz = lado - box.width/2
-					}
+
+		if (i == 0) {
+			posx = 0
+			posz = 0
+			color = 'red'
+		} else {
+			if (Math.abs(e2.posx) < lado) {
+				posz = lado / 2 + box.width / 2;
+				if (e2.posx == 0) { //only the first time
+					posx = lado / 2 - box.width / 2
+					e2.posx = posx - box.width / 2
 					
-					
+				} else {
+					posx = e2.posx - box.width / 2
 					
 				}
+				e2.posz = lado / 2 + box.width;
+				e2.posx = posx - box.width / 2
+
+				objpush = {
+					x : posx,
+					z : posz,
+					len : box.width,
+				}
+				right.push(objpush)
+			} else if (Math.abs(e3.posz) <= lado / 2) {
+				posx = -lado / 2 - box.width / 2
+				if (e3.posx == 0) {
+					posz = lado / 2 - box.width / 2
+				} else {
+					posz = e3.posz - box.width / 2
+				}
+				e3.posx = posx - box.width / 2
+				e3.posz = posz - box.width / 2
+				objpush = {
+					x : posx,
+					z : posz,
+					len : box.width,
+				}
+				bottom.push(objpush)
+			} else if (Math.abs(e4.posx) <= lado / 2) {
+				posz = -lado / 2 - box.width / 2
+				if (e4.posx == 0) {
+					//only first time
+					posx = box.width / 2 - lado / 2
+					e4.posx = box.width - lado / 2
+				} else {
+					posx = e4.posx + box.width / 2
+					e4.posx = e4.posx + box.width
+				}
+				e4.posz = -lado - box.width
+				objpush = {
+					x : posx,
+					z : posz,
+					len : box.width,
+				}
+				left.push(objpush)
+			} else if (Math.abs(e1.posz) <= lado / 2) {
+				console.log(e1.posx);
+
+				posx = lado / 2 + box.width / 2
+				if (e1.posx == 0) { //only the first time3
+					posz = lado / 2 - box.width / 2
+				} else {
+					posz = e1.posz + box.width / 2
+				}
+				e1.posx = posx + box.width / 2
+				e1.posz = posz + box.width / 2
+
+				objpush = {
+					x : posx,
+					z : posz,
+					len : box.width,
+				}
+				top.push(objpush)
+			} else {
+				console.log('ya no estoy en la primera circunderencia');
+				//console.log(top);
+				console.log(right);
+				//console.log(right);
+				//console.log(left);
+				
+				
+				for (let j = 0; j < right.length; j++) {
+					console.log(right[j].len);
+					console.log(box.width);
+					
+					
+					if (right[j].len >= box.width) { //fits
+						console.log('paso if');
+						
+						posx = right[j].x
+						posz =  right[j].z + right[j].len/2 + box.width/2
+						right.splice(j,1) //remove the item used
+						break
+					}
+				}
+				console.log(posx);
+
+				console.log(posz);
+				
+				
 			}
+
 		}
 
+		console.log();
 		
-	
+
+
+
 		var entity = document.createElement('a-entity');
 
 		entity.setAttribute('newisland', {
