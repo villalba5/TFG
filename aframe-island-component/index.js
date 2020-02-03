@@ -1,5 +1,8 @@
-
-
+var searchright = true
+var searchbottom = true
+var searchleft = true
+var searchtop = true
+var found = false
 
 AFRAME.registerComponent('newisland', {
 	schema: {
@@ -398,22 +401,28 @@ function BoxesConcentric(boxes) {
 	var scene = document.querySelector('a-scene');
 	var lado = boxes[0].width;
 
+	//think if i need the corners ???
+
 	var e1 = { //upper right
 		posx: 0,
 		posz: 0
 	}
+	var e1posz = 0
 	var e2 = { //down right
 		posx: 0,
 		posz: 0
 	}
+	var e2posx = 0
 	var e3 = { //down left
 		posx: 0,
 		posz: 0
 	}
+	var e3posz = 0
 	var e4 = { // upper left
 		posx: 0,
 		posz: 0
 	}
+	var e4posx = 0
 
 	//i have one list for each side, one for the rigth, other for the left, other for the top and other for the bottom side.
 	//in each array, i save an object that have the position x and y and the length of the segment
@@ -423,18 +432,19 @@ function BoxesConcentric(boxes) {
 	var top = []
 	var bottom = []
 
-	firstcircle = true;
 
-	for (let i = 0; i < 12; i++) {
+	//i will go for each elements in the boxes array, placing the elements in concentric circles
+	for (let i = 0; i < 16; i++) {
+		found = false
 		const box = boxes[i];
-		color = '#00ffff'
+		color = '#00ffff' //light blue
 
 		if (i == 0) {
 			posx = 0
 			posz = 0
 			color = 'red'
 		} else {
-			if (Math.abs(e2.posx) < lado) {
+			if (Math.abs(e2.posx) < lado / 2) {
 				posz = lado / 2 + box.width / 2;
 				if (e2.posx == 0) { //only the first time
 					posx = lado / 2 - box.width / 2
@@ -442,15 +452,19 @@ function BoxesConcentric(boxes) {
 				} else {
 					posx = e2.posx - box.width / 2
 				}
-				e2.posz = lado / 2 + box.width;
+				e2.posz = parseFloat(lado / 2) + parseFloat(box.width);
 				e2.posx = posx - box.width / 2
 
 				objpush = {
-					x : posx,
-					z : posz,
-					len : box.width,
+					x: posx,
+					z: posz,
+					len: box.width,
 				}
 				right.push(objpush)
+
+				if (Math.abs(e2.posx) > lado) { //if the element is greather than the side box, we must save the other side in the bottom
+					bottom.push(objpush)
+				}
 			} else if (Math.abs(e3.posz) <= lado / 2) {
 				posx = -lado / 2 - box.width / 2
 				if (e3.posx == 0) {
@@ -461,11 +475,14 @@ function BoxesConcentric(boxes) {
 				e3.posx = posx - box.width / 2
 				e3.posz = posz - box.width / 2
 				objpush = {
-					x : posx,
-					z : posz,
-					len : box.width,
+					x: posx,
+					z: posz,
+					len: box.width,
 				}
 				bottom.push(objpush)
+				if (Math.abs(e3.posz) > lado / 2) { //if the element is greather than the side box, we must save the other side in the bottom
+					left.push(objpush)
+				}
 			} else if ((e4.posx) <= lado / 2) {
 				posz = -lado / 2 - box.width / 2
 				if (e4.posx == 0) {
@@ -474,15 +491,19 @@ function BoxesConcentric(boxes) {
 					e4.posx = box.width - lado / 2
 				} else {
 					posx = e4.posx + box.width / 2
-					e4.posx = box.width + e4.posx 
+					e4.posx = box.width + e4.posx
 				}
 				e4.posz = -lado - box.width
 				objpush = {
-					x : posx,
-					z : posz,
-					len : box.width,
+					x: posx,
+					z: posz,
+					len: box.width,
 				}
 				left.push(objpush)
+
+				if (Math.abs(e4.posx) > lado / 2) { //if the element is greather than the side box, we must save the other side in the bottom
+					top.push(objpush)
+				}
 			} else if (Math.abs(e1.posz) <= lado / 2) {
 				posx = lado / 2 + box.width / 2
 				if (e1.posx == 0) { //only the first time3
@@ -494,46 +515,123 @@ function BoxesConcentric(boxes) {
 				e1.posz = posz + box.width / 2
 
 				objpush = {
-					x : posx,
-					z : posz,
-					len : box.width,
+					x: posx,
+					z: posz,
+					len: box.width,
 				}
 				top.push(objpush)
+
+				if (Math.abs(e1.posz) > lado / 2) { //if the element is greather than the side box, we must save the other side in the bottom
+					right.push(objpush)
+				}
 			} else {
-				console.log('ya no estoy en la primera circunderencia');
-				//console.log(top);
+				//i'm not in the first circle
+
+				console.log('top');
+				console.log(top);
+				console.log('right');
 				console.log(right);
-				//console.log(right);
-				//console.log(left);
-				
-				
-				for (let j = 0; j < right.length; j++) {
-					if (right[j].len == box.width) { //fits						
-						posx = right[j].x
-						posz =  right[j].z + right[j].len/2 + box.width/2
-						right.splice(j,1) //remove the item used
-						break
-					}else if (right[j].len > box.width) {
-						posx = right[j].x + right[j].len/2 - box.width/2
-						posz =  right[j].z + right[j].len/2 + box.width/2
-						right[j].x = right[j].x - right[j].len/4
-						right.splice(j,1) //remove the item used
-						break
-					}else{
-						console.log('ningunoi encaja');
+				console.log('bottom');
+				console.log(bottom);
+				console.log('left');
+				console.log(left);
+
+
+				//searching for a place to fits the box
+				console.log(searchright);
+
+				if (searchright) {
+					for (let j = 0; j < right.length; j++) {
+						console.log('buscando en right');
+						if (right[j].len >= box.width) { //fits						
+							posx = right[j].x
+							posz = right[j].z + right[j].len / 2 + box.width / 2
+							length = right[j].len
+
+							if (posz > (parseFloat(5) + parseFloat(e2.posz))) {
+								posx = posx - length
+								posz = posz - length
+
+								//update the corner
+
+								e2.posx = posx - length / 2
+								e2.posz = parseFloat(posz) + parseFloat(length / 2)
+
+								//for not search more in right
+								searchright = false
+
+								//delete the previous segment and push the new one
+								//bottom.splice(1, 1) //remove the item used
+								objpush = {
+									x: posx,
+									z: posz,
+									len: length
+								}
+								bottom.push(objpush)
+
+							} else {
+								right.splice(j, 1) //remove the item used
+								objpush = {
+									x: posx,
+									z: posz,
+									len: length
+								}
+							}
+
+
+							right.push(objpush)
+							found = true
+							break
+						}
+					}
+				}
+
+				console.log(found);
+				console.log(searchright);
+
+				if (!found) {
+					console.log('buscando en bottom');
+					for (let k = 0; k < bottom.length; k++) {
+						if (bottom[k].len >= box.width) {
+							posx = bottom[k].x - bottom[k].len / 2 - box.width / 2
+							posz = bottom[k].z
+							length = bottom[k].len
+
+							bottom.splice(k, 1)
+							objpush = {
+								x: posx,
+								z: posz,
+								len: length
+							}
+							bottom.push(objpush)
+							found = true
+							break
+						}
+
 					}
 				}
 			}
 
+			if (!found) {
+				console.log('buscando en left');
+				for (let l = 0; l < left.length; l++) {
+
+
+
+				}
+			}
+
+			if (!found) {
+				console.log('buscando en top');
+				for (let l = 0; l < top.length; l++) {
+
+
+
+				}
+			}
 		}
 
-		console.log();
-		
-
-
-
 		var entity = document.createElement('a-entity');
-
 		entity.setAttribute('newisland', {
 			'depth': box.depth,
 			'height': box.height,
