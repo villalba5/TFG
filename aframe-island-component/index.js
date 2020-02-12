@@ -151,40 +151,60 @@ AFRAME.registerComponent('islands', {
 				break;
 		}
 	},
-
-	/**
-	 * Called when a component is removed (e.g., via removeAttribute).
-	 * Generally undoes all modifications to the entity.
-	 */
-	remove: function () { },
-
-	/**
-	 * Called on each scene tick.
-	 */
-	// tick: function (t) { },
-
-	/**
-	 * Called when entity pauses.
-	 * Use to stop or remove any dynamic or background behavior such as events.
-	 */
-	pause: function () { },
-
-	/**
-	 * Called when entity resumes.
-	 * Use to continue or add any dynamic or background behavior such as events.
-	 */
-	play: function () { },
-
-	/**
-	 * Event handlers that automatically get attached or detached based on scene state.
-	 */
-	events: {
-		click: function (evt) {
-			console.log('This entity was clicked!');
-			this.el.setAttribute('material', 'color', 'red');
-		}
-	}
 });
+
+
+AFRAME.registerComponent('concentricislands', {
+
+	schema: {
+		height: { type: 'number', default: 1 },
+		area: { type: 'number', default: 1 },
+		databox: { type: 'asset' },
+		geometry: { type: 'string', default: 'box' }
+	},
+	init: function () {
+		//Load de json file
+		this.loader = new THREE.FileLoader();
+		var data = this.data;
+		if (data.databox) {
+			this.loader.load(data.databox, this.onDataLoaded.bind(this));
+		}
+	},
+
+	
+
+	onDataLoaded: function (file) { //in this function i parse the json file and get the objects that i will represent
+
+		console.log('entrando onDataLoaded');
+
+		// create box for each json objet
+
+		var data = this.data;
+		//console.log(data);
+		var elements = JSON.parse(file);
+		//console.log(elements);
+
+		switch (data.geometry) {
+			case "cylinder":
+				//console.log('es un cylinder!!');
+				printCylinders(elements, data.positioning)
+				break;
+			default:
+				//console.log('no es un cylinder');
+				printBoxes(elements, data.positioning)
+				break;
+		}
+	},
+});
+
+
+
+
+
+//-----FUNCTIONS-----
+
+
+
 
 function printBoxes(boxes, positioning) {
 	console.log(boxes, positioning);
