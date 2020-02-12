@@ -184,16 +184,11 @@ AFRAME.registerComponent('concentricislands', {
 		var elements = JSON.parse(file);
 		//console.log(elements);
 
-		switch (data.geometry) {
-			case "cylinder":
-				//console.log('es un cylinder!!');
-				printCylinders(elements, data.positioning)
-				break;
-			default:
-				//console.log('no es un cylinder');
-				printBoxes(elements, data.positioning)
-				break;
-		}
+		printfirst(elements);
+
+		var index = printfirstcircle(elements);
+
+		printConcentricCircles(elements, index); //the index after the first circle
 	},
 });
 
