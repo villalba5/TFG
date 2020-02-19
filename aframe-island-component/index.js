@@ -27,6 +27,7 @@ AFRAME.registerComponent('newisland', {
 	init: function () {
 		var data = this.data;
 		var el = this.el;
+		var loader = new THREE.TextureLoader();
 
 		switch (data.geometry) { //in this switch i detect the geometry that i want to representate
 			case 'box':
@@ -45,7 +46,12 @@ AFRAME.registerComponent('newisland', {
 				break;
 		}
 
-		this.material = new THREE.MeshStandardMaterial({ color: data.color });
+		if (data.posx == 0 && data.posz == 0) {
+			this.material = new THREE.MeshStandardMaterial({ color: data.color });
+		}else{
+			this.material = new THREE.MeshStandardMaterial({ map: loader.load("../../../assets/imgs/fondocubos.jpg")});
+		}
+
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 		this.mesh.position.set(data.posx, data.height / 2, data.posz);
 
@@ -171,24 +177,35 @@ AFRAME.registerComponent('concentricislands', {
 		}
 	},
 
-	
+
 
 	onDataLoaded: function (file) { //in this function i parse the json file and get the objects that i will represent
+
+		var rightside = []
+		var leftside = []
+		var topside = []
+		var bottomside = []
+
 
 		console.log('entrando onDataLoaded');
 
 		// create box for each json objet
 
 		var data = this.data;
+		console.log(data);
+
 		//console.log(data);
 		var elements = JSON.parse(file);
-		//console.log(elements);
+		console.log(elements);
 
-		printfirst(elements);
+		var scene = document.querySelector('a-scene');
 
-		var index = printfirstcircle(elements);
+		printFirst(elements[0], scene, rightside, leftside, topside, bottomside); //print the first element in the center of the scene
 
-		printConcentricCircles(elements, index); //the index after the first circle
+		console.log(rightside);
+
+
+		printCircles(elements, scene, rightside, leftside, topside, bottomside);
 	},
 });
 
@@ -198,8 +215,104 @@ AFRAME.registerComponent('concentricislands', {
 
 //-----FUNCTIONS-----
 
+function colocar(scene, depth, height, width, x, z, color) {
+
+	var entity = document.createElement('a-entity');
+
+	entity.setAttribute('newisland', {
+		'color': color,
+		'depth': depth,
+		'height': height,
+		'width': width,
+		'posx': x,
+		'posz': z,
+		'geometry': 'box'
+	});
+	scene.appendChild(entity);
+
+}
+
+function printFirst(box, scene, rightside, leftside, topside, bottomside) {
+	console.log('printFirst');
+
+	var objPush = {
+		posx: 0,
+		posz: Math.abs(box.width / 2),
+		len: box.width,
+	}
+	rightside.push(1)
+	rightside.push(objPush)
+
+	var objPush = {
+		posx: 0,
+		posz: -Math.abs(box.width / 2),
+		len: box.width,
+	}
+	leftside.push(1)
+	leftside.push(objPush)
+
+	var objPush = {
+		posx: Math.abs(box.width / 2),
+		posz: 0,
+		len: box.width,
+	}
+	topside.push(1)
+	topside.push(objPush)
+
+	var objPush = {
+		posx: -Math.abs(box.width / 2),
+		posz: 0,
+		len: box.width,
+	}
+	bottomside.push(1)
+	bottomside.push(objPush)
+
+	colocar(scene, box.depth, box.height, box.width, 0, 0, 'red')
+}
+
+function printCircles(boxes, scene, topside, bottomside, rightside, leftside) {
+	var e2 = {
+		x: 0,
+		z: 0,
+		next: 0
+	}
+
+	for (let i = 1; i < boxes.length; i++) { //i starts in 1 because the first box is placed
+		const box = boxes[i];
+
+		if (box.width <= rightside[rightside[0].len]) { //the box fits in the rigth side
+			posx = rightside[0].width / 2 - box.width / 2
+			posz = rightside[0].width / 2 + box.width / 2
+			e2.x = -box.width / 2
+			e2.z = rightside[0].width / 2 + box.width
+			colocar(scene, box.depth, box.height, box.width, posx, posz, 'green')
+			rightside.splice(rightside[0], 1)
+			var objPush = {
+				posx: posx,
+				posz: posz,
+				len: box.width,
+			}
+			rightside.push(objPush)
+			rightside[0]++
+
+			// } else if (checkFits(next2)) {
+			// 	console.log('2222222222222222222222222222222222222222222222222222222222222222');
 
 
+			// } else if (checkFits(next3)) {
+			// 	console.log('3333333333333333333333333333333333333333333333333333333333333333333');
+
+
+			// } else if (checkFits(next4)) {
+			// 	console.log('44444444444444444444444444444444444444444444444444444444444444444444444');
+
+
+		} else {
+			console.log('vuelta completada :) ');
+
+		}
+	}
+}
 
 function printBoxes(boxes, positioning) {
 	console.log(boxes, positioning);
@@ -410,8 +523,17 @@ function BoxesNear(parboxesams) {
 
 }
 
+
+
+
+
+
+
+
 function BoxesConcentric(boxes) {
 	//console.log('boxes concentric');
+
+	var nextrigth = 0;
 
 	var scene = document.querySelector('a-scene');
 	var lado = boxes[0].width;
@@ -449,17 +571,17 @@ function BoxesConcentric(boxes) {
 
 
 	//i will go for each elements in the boxes array, placing the elements in concentric circles
-	for (let i = 0; i < 16; i++) {
+	for (let i = 0; i < 13; i++) {
 		found = false
 		const box = boxes[i];
 		color = '#00ffff' //light blue
 
-		if (i == 0) {
+		if (i == 0) { //if is the first box, it will be in the center
 			posx = 0
 			posz = 0
 			color = 'red'
-		} else {
-			if (Math.abs(e2.posx) < lado / 2) {
+		} else { //if not it will be in concentric circles around the center
+			if (Math.abs(e2.posx) < lado / 2) { // Check the right side
 				posz = lado / 2 + box.width / 2;
 				if (e2.posx == 0) { //only the first time
 					posx = lado / 2 - box.width / 2
@@ -476,10 +598,13 @@ function BoxesConcentric(boxes) {
 					len: box.width,
 				}
 				right.push(objpush)
+				console.log('rigth');
+				console.log(right);
 
-				if (Math.abs(e2.posx) > lado) { //if the element is greather than the side box, we must save the other side in the bottom
+				if (Math.abs(e2.posx) > lado) { //if the element is greather than the center box side , we must save the other side in the bottom
 					bottom.push(objpush)
 				}
+
 			} else if (Math.abs(e3.posz) <= lado / 2) {
 				posx = -lado / 2 - box.width / 2
 				if (e3.posx == 0) {
@@ -494,7 +619,11 @@ function BoxesConcentric(boxes) {
 					z: posz,
 					len: box.width,
 				}
+
 				bottom.push(objpush)
+				console.log('bottom');
+				console.log(bottom);
+
 				if (Math.abs(e3.posz) > lado / 2) { //if the element is greather than the side box, we must save the other side in the bottom
 					left.push(objpush)
 				}
@@ -515,6 +644,10 @@ function BoxesConcentric(boxes) {
 					len: box.width,
 				}
 				left.push(objpush)
+				console.log('left');
+				console.log(left);
+
+
 
 				if (Math.abs(e4.posx) > lado / 2) { //if the element is greather than the side box, we must save the other side in the bottom
 					top.push(objpush)
@@ -535,115 +668,100 @@ function BoxesConcentric(boxes) {
 					len: box.width,
 				}
 				top.push(objpush)
-
-				if (Math.abs(e1.posz) > lado / 2) { //if the element is greather than the side box, we must save the other side in the bottom
-					right.push(objpush)
-				}
-			} else {
-				//i'm not in the first circle
-
 				console.log('top');
 				console.log(top);
-				console.log('right');
-				console.log(right);
-				console.log('bottom');
-				console.log(bottom);
-				console.log('left');
-				console.log(left);
 
+				if (Math.abs(e1.posz) > lado / 2) { //if the element is greather than the side box, we must save the other side in the bottom
+					right.unshift(objpush)
+				}
+			} else {
 
-				//searching for a place to fits the box
-				console.log(searchright);
+				
+				//i'm not in the first circle
+				var continuerigth = right[nextrigth].x+right[nextrigth].len/2;
 
 				if (searchright) {
-					for (let j = 0; j < right.length; j++) {
-						console.log('buscando en right');
-						if (right[j].len >= box.width) { //fits						
-							posx = right[j].x
-							posz = right[j].z + right[j].len / 2 + box.width / 2
-							length = right[j].len
+					console.log('buscando en right');
+					
+					if (right[nextrigth].len >= box.width) { //fits						
+						posx = right[nextrigth].x
+						posz = right[nextrigth].z + right[nextrigth].len / 2 + box.width / 2
+						length = right[nextrigth].len
 
-							if (posz > (parseFloat(5) + parseFloat(e2.posz))) {
-								posx = posx - length
-								posz = posz - length
+						objpush = {
+							x: posx,
+							z: posz,
+							len: length
+						}
 
-								//update the corner
+						right.splice(nextrigth, 1) //remove the item used
+						right.unshift(objpush)
 
-								e2.posx = posx - length / 2
-								e2.posz = parseFloat(posz) + parseFloat(length / 2)
+						if (nextrigth == 0) {
+							top.push(objpush)
+							e1.posx = parseFloat(posx) + parseFloat(box.width/2)
+							e1.posz = parseFloat(posz) + parseFloat(box.width/2) 
+						}
 
-								//for not search more in right
-								searchright = false
+						if (nextrigth == right.length) {
+							bottom.unshift(objpush)
+						}
+						e2.posx = parseFloat(posx) - parseFloat(box.width/2)
+						e2.posz = parseFloat(posz) - parseFloat(box.width/2) 
+						nextrigth++
 
-								//delete the previous segment and push the new one
-								//bottom.splice(1, 1) //remove the item used
-								objpush = {
-									x: posx,
-									z: posz,
-									len: length
-								}
-								bottom.push(objpush)
+					} else { //if dont fits we search the position of the next element
+						if (nextrigth + 1 <= right.length) {
+							posx = right[nextrigth].x
+							posz = right[nextrigth + 1].z + right[nextrigth + 1].len / 2 + box.width / 2
+							length = right[nextrigth + 1].len
 
-							} else {
-								right.splice(j, 1) //remove the item used
-								objpush = {
-									x: posx,
-									z: posz,
-									len: length
-								}
-							}
-
-
-							right.push(objpush)
-							found = true
-							break
 						}
 					}
 				}
 
-				console.log(found);
 				console.log(searchright);
 
-				if (!found) {
-					console.log('buscando en bottom');
-					for (let k = 0; k < bottom.length; k++) {
-						if (bottom[k].len >= box.width) {
-							posx = bottom[k].x - bottom[k].len / 2 - box.width / 2
-							posz = bottom[k].z
-							length = bottom[k].len
+				// if (!found) {
+				// 	console.log('buscando en bottom');
+				// 	for (let k = 0; k < bottom.length; k++) {
+				// 		if (bottom[k].len >= box.width) {
+				// 			posx = bottom[k].x - bottom[k].len / 2 - box.width / 2
+				// 			posz = bottom[k].z
+				// 			length = bottom[k].len
 
-							bottom.splice(k, 1)
-							objpush = {
-								x: posx,
-								z: posz,
-								len: length
-							}
-							bottom.push(objpush)
-							found = true
-							break
-						}
+				// 			bottom.splice(k, 1)
+				// 			objpush = {
+				// 				x: posx,
+				// 				z: posz,
+				// 				len: length
+				// 			}
+				// 			bottom.push(objpush)
+				// 			found = true
+				// 			break
+				// 		}
 
-					}
-				}
+				// 	}
+				// }
 			}
 
-			if (!found) {
-				console.log('buscando en left');
-				for (let l = 0; l < left.length; l++) {
+			// if (!found) {
+			// 	console.log('buscando en left');
+			// 	for (let l = 0; l < left.length; l++) {
 
 
 
-				}
-			}
+			// 	}
+			// }
 
-			if (!found) {
-				console.log('buscando en top');
-				for (let l = 0; l < top.length; l++) {
+			// if (!found) {
+			// 	console.log('buscando en top');
+			// 	for (let l = 0; l < top.length; l++) {
 
 
 
-				}
-			}
+			// 	}
+			// }
 		}
 
 		var entity = document.createElement('a-entity');
@@ -656,5 +774,13 @@ function BoxesConcentric(boxes) {
 			'color': color,
 		});
 		scene.appendChild(entity);
+		console.log('top');
+				console.log(top);
+				console.log('right');
+				console.log(right);
+				console.log('bottom');
+				console.log(bottom);
+				console.log('left');
+				console.log(left);
 	}
 } 
