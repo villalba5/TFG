@@ -583,7 +583,9 @@ function BoxesConcentric(boxes) {
 
 
 	//i will go for each elements in the boxes array, placing the elements in concentric circles
-	for (let i = 0; i < 14; i++) {
+	for (let i = 0; i < 16; i++) {
+		console.log('------------------------------------------------------------------------');
+		
 		found = false
 		const box = boxes[i];
 		color = '#00ffff' //light blue
@@ -594,6 +596,8 @@ function BoxesConcentric(boxes) {
 			color = 'red'
 		} else { //if not it will be in concentric circles around the center
 			if (firstcircle) {
+				console.log('paso firstcircle');
+
 				if (Math.abs(e2.posx) < lado / 2) { // Check the right side
 					console.log('comprobando primera circunferencia a la derecha');
 
@@ -690,7 +694,35 @@ function BoxesConcentric(boxes) {
 						right.unshift(objpush)
 					}
 				} else {
+					console.log('fin primer circulito');
+
+					// i only pass the first time
+
 					firstcircle = false
+					posx = right[next].x + right[next].len / 2 - box.width / 2
+					posz = right[next].z + right[next].len / 2 + box.width / 2
+					length = right[next].len
+
+					objpush = {
+						x: posx,
+						z: posz,
+						len: length
+					}
+
+					console.log(top);
+					
+
+					top.push(objpush)
+
+					console.log('top');
+					
+					console.log(top);
+					console.log(next);
+					right.splice(0,1) //remove the first element
+					right.unshift(objpush) //add in the begginin
+					
+					next++
+
 				}
 
 
@@ -707,13 +739,17 @@ function BoxesConcentric(boxes) {
 
 				//i'm not in the first circle
 				console.log('circunferencias concéntricas');
+				console.log(next, 'next');
+				
 
 				if (searchright) {
 					console.log('buscando en right');
 					if (right[next] != undefined && right[next].len >= box.width) { //fits	
+						console.log('paso if fits');
+
 						posx = right[next].x + right[next].len / 2 - box.width / 2
 						posz = right[next].z + right[next].len / 2 + box.width / 2
-						length = right[next].len
+						length = box.width
 
 						objpush = {
 							x: posx,
@@ -721,57 +757,105 @@ function BoxesConcentric(boxes) {
 							len: length
 						}
 
-						//update the object
+						console.log(right[next]);
+						
+						var xaux = bottom[0].x
+						var zaux = bottom[0].z
+						var lenaux = bottom[0].len
+												
 
+						//update the object
 						right[next].x = posx
 						right[next].z = posz
 						right[next].len = length
 
-						console.log(next, 'nextrigth');
-						console.log(right.length, 'length');
+						console.log(right[next]);
+						
+						bottom[0].x = xaux
+						bottom[0].z = zaux
+						bottom[0].len = lenaux
 
-						if (next == 0) {
-							top.push(objpush)
-							e1.posx = parseFloat(posx) + parseFloat(box.width / 2)
-							e1.posz = parseFloat(posz) + parseFloat(box.width / 2)
+						console.log(bottom[0]);
+						
+
+						
+
+						if (right[next + 1] == undefined) {
+							console.log('next == undefined');
+
+							right.splice(2,1)
+							right.push(objpush)
+							bottom.unshift(objpush)
 						}
 
-						e2.posx = parseFloat(posx) - parseFloat(box.width / 2)
-						e2.posz = parseFloat(posz) - parseFloat(box.width / 2)
 						next++
 
 					} else { //if dont fits we search the position of the next element
 						console.log('paso elseeeeeeeee');
 
-						if (right[next] == undefined) {
+						if (right[next + 1] != undefined && next + 1 <= right.next) { //if dont fit in the box, got the z of the next box
+							console.log('pasoooooo if');
+							
+							posx = right[next].x
+							posz = right[next + 1].z + right[next + 1].len / 2 + box.width / 2
+							length = box.width
+
+						} else if (right[next] == undefined) {
+
+							console.log('paso undefined');
+							
+
 							//if its undefined there are no more elements and we have to put it the last
-							posx = right[next - 1].x - right[next - 1].len / 2 - box.width / 2
-							posz = right[next - 1].z - right[next - 1].len / 2 + box.width / 2
+							posx = posx - right[next-1].len / 2 - box.width / 2
+							posz = posz - right[next-1].len / 2 + box.width / 2
 
 							objpush = {
 								x: posx,
 								z: posz,
-								len: length
+								len: box.width
 							}
 							console.log('es undefined');
 							console.log(posx, posz);
 
-
+							bottom.splice(0,1)
 							bottom.unshift(objpush)
 							right.push(objpush)
 							searchright = false
-							next = 0 //for the next circle
+							next = 1//for the next circle
 						}
 
-						if (right[next + 1] != undefined && next + 1 <= right.next) { //if dont fit in the box, got the z of the next box
-							posx = right[next].x
-							posz = right[next + 1].z + right[next + 1].len / 2 + box.width / 2
-							length = right[next + 1].len
-
-						}
 					}
 
 				} else if (searchbottom) {
+					console.log('buscando en bottom');
+
+					console.log(next);
+
+
+					if (bottom[next] != undefined && bottom[next].len >= box.width) { //fits
+						console.log('fits');
+
+						posx = bottom[next].x - bottom[next].len / 2 - box.width / 2
+						posz = bottom[next].z - bottom[next].len / 2 + box.width / 2
+
+						console.log('x : ', posx , 'z : ', posz);
+						
+					} else {
+						//dont fits
+						console.log('paso por el else');
+						if (bottom[next + 1]==undefined) {
+							console.log('el next es undefined');
+							console.log(next);
+							
+							posx = bottom[next].x - bottom[next].len / 2 - box.width / 2
+							posz = bottom[next].z + bottom[next].len / 2 - box.width / 2
+							console.log(posx, 'x',posz,'z');
+							
+						}
+						
+					}
+
+					next ++
 
 
 				} else if (searchleft) {
