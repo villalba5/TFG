@@ -49,7 +49,7 @@ AFRAME.registerComponent('newisland', {
 		if (data.posx == 0 && data.posz == 0) {
 			this.material = new THREE.MeshStandardMaterial({ color: data.color });
 		} else {
-			this.material = new THREE.MeshStandardMaterial({ map: loader.load("../../../assets/imgs/fondocubos.jpg") });
+			this.material = new THREE.MeshStandardMaterial({ map: loader.load("../../../assets/imgs/bordecubos.png") });
 		}
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -583,8 +583,8 @@ function BoxesConcentric(boxes) {
 
 
 	//i will go for each elements in the boxes array, placing the elements in concentric circles
-	for (let i = 0; i < 16; i++) {
-		console.log('------------------------------------------------------------------------');
+	for (let i = 0; i < 20; i++) {
+		console.log('----------------------------------------------------');
 		
 		found = false
 		const box = boxes[i];
@@ -783,7 +783,7 @@ function BoxesConcentric(boxes) {
 						if (right[next + 1] == undefined) {
 							console.log('next == undefined');
 
-							right.splice(2,1)
+							right.splice(right.length-1,1)
 							right.push(objpush)
 							bottom.unshift(objpush)
 						}
@@ -793,7 +793,7 @@ function BoxesConcentric(boxes) {
 					} else { //if dont fits we search the position of the next element
 						console.log('paso elseeeeeeeee');
 
-						if (right[next + 1] != undefined && next + 1 <= right.next) { //if dont fit in the box, got the z of the next box
+						if (right[next] != undefined) { //if dont fit in the box, got the z of the next box
 							console.log('pasoooooo if');
 							
 							posx = right[next].x
@@ -829,38 +829,87 @@ function BoxesConcentric(boxes) {
 				} else if (searchbottom) {
 					console.log('buscando en bottom');
 
-					console.log(next);
-
-
 					if (bottom[next] != undefined && bottom[next].len >= box.width) { //fits
-						console.log('fits');
+						//console.log('fits');
 
 						posx = bottom[next].x - bottom[next].len / 2 - box.width / 2
 						posz = bottom[next].z - bottom[next].len / 2 + box.width / 2
 
-						console.log('x : ', posx , 'z : ', posz);
+						//console.log(bottom[next]);
+						
+						//update the object
+						bottom[next].x = posx
+						bottom[next].z = posz
+						bottom[next].len = box.width
+						
+						//console.log(bottom[next]);
 						
 					} else {
 						//dont fits
-						console.log('paso por el else');
+						//console.log('paso por el else');
 						if (bottom[next + 1]==undefined) {
-							console.log('el next es undefined');
-							console.log(next);
+							//console.log('el next es undefined');
+							//console.log(next);
+
+							//console.log('next.len',bottom[next-1].len/2);
 							
-							posx = bottom[next].x - bottom[next].len / 2 - box.width / 2
-							posz = bottom[next].z + bottom[next].len / 2 - box.width / 2
-							console.log(posx, 'x',posz,'z');
+							posx = bottom[next-1].x + bottom[next-1].len/2 - box.width / 2
+							posz = bottom[next-1].z - bottom[next-1].len/2 - box.width / 2
+							//console.log(posx, 'x',posz,'z');
+
+							objpush = {
+								x: posx,
+								z: posz,
+								len: box.width
+							}
+
+							bottom.splice(bottom.length-1,1)
+							bottom.push(objpush)
+							left.unshift(objpush)
+							searchbottom = false
+							next = 0
+						}
+					}
+					next ++
+				} else if (searchleft) {
+					console.log('estoy en searchleft :)');
+					if (left[next] != undefined && left[next].len >= box.width) { //fits
+						posx = left[next].x+left[next].len/2-box.width/2
+						posz = left[next].z-left[next].len/2-box.width/2
+
+						left[next].x = posx
+						left[next].z = posz
+						left[next].len = box.width
+					}else{
+						if (left[next + 1] == undefined) { //is the last element
+							console.log('the last --->');
+
+							posx = left[next-1].x+left[next-1].len/2+box.width/2
+							posz = left[next-1].z+left[next-1].len/2-box.width/2
+
+							objpush = {
+								x: posx,
+								z: posz,
+								len: box.width
+							}
+
+							left.push(objpush)
+							top.unshift(objpush)
+
+							searchleft = false
+							next = 1
+							
+						}else{ //it dont fits
+							console.log('dont fits :(');
 							
 						}
-						
 					}
-
-					next ++
-
-
-				} else if (searchleft) {
+					next++
+					
 
 				} else if (searchtop) {
+					console.log('searchtoppp ->>>>>>>>>>');
+					
 
 				} else {
 					searchtop = true
