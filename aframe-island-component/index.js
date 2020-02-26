@@ -583,7 +583,7 @@ function BoxesConcentric(boxes) {
 
 
 	//i will go for each elements in the boxes array, placing the elements in concentric circles
-	for (let i = 0; i < 20; i++) {
+	for (let i = 0; i < 60; i++) {
 		console.log('----------------------------------------------------');
 		
 		found = false
@@ -793,7 +793,7 @@ function BoxesConcentric(boxes) {
 					} else { //if dont fits we search the position of the next element
 						console.log('paso elseeeeeeeee');
 
-						if (right[next] != undefined) { //if dont fit in the box, got the z of the next box
+						if (right[next + 1] != undefined) { //if dont fit in the box, got the z of the next box
 							console.log('pasoooooo if');
 							
 							posx = right[next].x
@@ -877,12 +877,38 @@ function BoxesConcentric(boxes) {
 						posx = left[next].x+left[next].len/2-box.width/2
 						posz = left[next].z-left[next].len/2-box.width/2
 
+						xaux = top[0].x
+						zaux = top[0].z
+						lenaux = top[0].len
+
 						left[next].x = posx
 						left[next].z = posz
 						left[next].len = box.width
+
+						top[0].x = xaux
+						top[0].z = zaux
+						top[0].len = lenaux
+
+						if (next + 1== left.length) {
+							console.log('es el ultimo');
+							
+							//is the last
+							objpush = {
+								x: posx,
+								z: posz,
+								len: box.width
+							}
+							left.splice(left.length-1,1)
+							left.push(objpush)
+							top.unshift(objpush)
+						}
+						
 					}else{
 						if (left[next + 1] == undefined) { //is the last element
 							console.log('the last --->');
+
+							console.log(next,'next');
+							
 
 							posx = left[next-1].x+left[next-1].len/2+box.width/2
 							posz = left[next-1].z+left[next-1].len/2-box.width/2
@@ -894,14 +920,15 @@ function BoxesConcentric(boxes) {
 							}
 
 							left.push(objpush)
+							top.splice(0,1) //for delete the first item
 							top.unshift(objpush)
-
 							searchleft = false
-							next = 1
+							next = 0
 							
 						}else{ //it dont fits
 							console.log('dont fits :(');
-							
+							posx = left[next].x+left[next].len/2-box.width/2
+							posz = left[next + 1].z+left[next + 1].len/2-box.width/2
 						}
 					}
 					next++
@@ -909,6 +936,65 @@ function BoxesConcentric(boxes) {
 
 				} else if (searchtop) {
 					console.log('searchtoppp ->>>>>>>>>>');
+					if (top[next] != undefined && ((top[next-1].z + top[next-1].len/2)- top[next].z+top[next].len/2) >= box.width) { //fits
+						
+						posx = top[next].x + top[next].len/2 + box.width/2
+						posz = top[next].z + top[next].len/2 - box.width/2
+
+						console.log('old : ', top[next]);
+						
+
+						//replace the old object with the new one
+						top[next].x = posx
+						top[next].z = posz
+						top[next].len = box.width
+
+						console.log('new : ',top[next]);
+						
+
+						// if (next + 1== left.length) {
+						// 	console.log('es el ultimo');
+							
+						// 	//is the last
+						// 	objpush = {
+						// 		x: posx,
+						// 		z: posz,
+						// 		len: box.width
+						// 	}
+						// 	left.splice(left.length-1,1)
+						// 	left.push(objpush)
+						// 	top.unshift(objpush)
+						// }
+
+
+
+					}else{
+
+						if (top[next + 1] == undefined) { //is the last element
+							console.log('the last element');
+
+							posx = top[next-1].x-top[next-1].len/2+box.width/2
+							posz = top[next-1].z+top[next-1].len/2+box.width/2
+
+							searchright = true
+							searchbottom = true
+							searchleft = true
+							searchtop = true
+							next = -1
+						}else{
+							console.log('dont fits :(');
+							posx = parseFloat(top[next + 1].x) + parseFloat(top[next + 1].len/2) + parseFloat(box.width/2)
+							posz = top[next - 1].z + top[next - 1].len/2 + box.width/2
+
+							top[next].x = posx
+							top[next].z = posz
+							top[next].len = box.width
+
+							console.log(posx,posz,'<>');
+						}
+					}
+
+					next++
 					
 
 				} else {
