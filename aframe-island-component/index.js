@@ -583,7 +583,7 @@ function BoxesConcentric(boxes) {
 
 
 	//i will go for each elements in the boxes array, placing the elements in concentric circles
-	for (let i = 0; i < 60; i++) {
+	for (let i = 0; i < 28; i++) {
 		console.log('----------------------------------------------------');
 		
 		found = false
@@ -776,10 +776,7 @@ function BoxesConcentric(boxes) {
 						bottom[0].len = lenaux
 
 						console.log(bottom[0]);
-						
-
-						
-
+					
 						if (right[next + 1] == undefined) {
 							console.log('next == undefined');
 
@@ -799,6 +796,7 @@ function BoxesConcentric(boxes) {
 							posx = right[next].x
 							posz = right[next + 1].z + right[next + 1].len / 2 + box.width / 2
 							length = box.width
+							next++
 
 						} else if (right[next] == undefined) {
 
@@ -823,7 +821,6 @@ function BoxesConcentric(boxes) {
 							searchright = false
 							next = 1//for the next circle
 						}
-
 					}
 
 				} else if (searchbottom) {
@@ -950,23 +947,6 @@ function BoxesConcentric(boxes) {
 						top[next].len = box.width
 
 						console.log('new : ',top[next]);
-						
-
-						// if (next + 1== left.length) {
-						// 	console.log('es el ultimo');
-							
-						// 	//is the last
-						// 	objpush = {
-						// 		x: posx,
-						// 		z: posz,
-						// 		len: box.width
-						// 	}
-						// 	left.splice(left.length-1,1)
-						// 	left.push(objpush)
-						// 	top.unshift(objpush)
-						// }
-
-
 
 					}else{
 
@@ -976,11 +956,45 @@ function BoxesConcentric(boxes) {
 							posx = top[next-1].x-top[next-1].len/2+box.width/2
 							posz = top[next-1].z+top[next-1].len/2+box.width/2
 
-							searchright = true
-							searchbottom = true
-							searchleft = true
-							searchtop = true
-							next = -1
+							objpush = {
+								x: posx,
+								z: posz,
+								len: box.width
+							}
+
+
+							// console.log('las cajas : ',top[next-1].z + top[next-1].len/2);
+							// console.log('next : ', next);
+							// console.log('z : ', posz);
+							// console.log('len : ', top[next-1].len/2);
+							// console.log(top[next-1]);
+							
+							// console.log('la esquina : ', right[0].z+right[0].len/2);
+
+							
+
+
+							if (posz +box.width/2 > right[0].z+right[0].len/2) {
+								top.push(objpush)
+
+								right.unshift(objpush)
+
+								console.log('los pongo todos a true');
+								console.log('las cajas : ',top[next-1].z + box.width/2);
+								console.log('la esquina : ', right[0].z+right[0].len/2);
+								
+								
+
+								searchright = true
+								searchbottom = true
+								searchleft = true
+								searchtop = true
+								next = 0
+							}else{
+								top.splice(top.length-1,1) //for delete the first item
+								top.push(objpush)
+
+							}
 						}else{
 							console.log('dont fits :(');
 							posx = parseFloat(top[next + 1].x) + parseFloat(top[next + 1].len/2) + parseFloat(box.width/2)
@@ -989,20 +1003,10 @@ function BoxesConcentric(boxes) {
 							top[next].x = posx
 							top[next].z = posz
 							top[next].len = box.width
-
-							console.log(posx,posz,'<>');
 						}
 					}
-
 					next++
-					
-
-				} else {
-					searchtop = true
-					searchright = true
-					searchbottom = true
-					searchleft = true
-				}
+				} 
 			}
 
 		}
