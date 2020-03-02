@@ -584,6 +584,7 @@ function BoxesConcentric(boxes) {
 
 	//i will go for each elements in the boxes array, placing the elements in concentric circles
 	for (let i = 0; i < 28; i++) {
+
 		console.log('----------------------------------------------------');
 		
 		found = false
