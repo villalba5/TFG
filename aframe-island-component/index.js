@@ -110,7 +110,8 @@ AFRAME.registerComponent('islands', {
 		width: { type: 'number', default: 1 },
 		databox: { type: 'asset' },
 		positioning: { type: 'string', default: 'random' },
-		geometry: { type: 'string', default: 'box' }
+		geometry: { type: 'string', default: 'box' },
+		num: { type: 'number', default: 1 },
 	},
 
 	/**
@@ -153,7 +154,7 @@ AFRAME.registerComponent('islands', {
 				break;
 			default:
 				//console.log('no es un cylinder');
-				printBoxes(elements, data.positioning)
+				printBoxes(elements, data.positioning, data.num)
 				break;
 		}
 	},
@@ -295,18 +296,6 @@ function printCircles(boxes, scene, topside, bottomside, rightside, leftside) {
 			rightside.push(objPush)
 			rightside[0]++
 
-			// } else if (checkFits(next2)) {
-			// 	console.log('2222222222222222222222222222222222222222222222222222222222222222');
-
-
-			// } else if (checkFits(next3)) {
-			// 	console.log('3333333333333333333333333333333333333333333333333333333333333333333');
-
-
-			// } else if (checkFits(next4)) {
-			// 	console.log('44444444444444444444444444444444444444444444444444444444444444444444444');
-
-
 		} else {
 			console.log('vuelta completada :) ');
 
@@ -314,7 +303,7 @@ function printCircles(boxes, scene, topside, bottomside, rightside, leftside) {
 	}
 }
 
-function printBoxes(boxes, positioning) {
+function printBoxes(boxes, positioning, num) {
 	console.log(boxes, positioning);
 	switch (positioning) {
 		case 'random':
@@ -331,7 +320,7 @@ function printBoxes(boxes, positioning) {
 			break;
 		case 'much':
 			//console.log('es much');
-			BoxesConcentric(boxes);
+			BoxesConcentric(boxes, num);
 		default:
 			break;
 	}
@@ -523,7 +512,7 @@ function BoxesNear(parboxesams) {
 
 }
 
-function BoxesConcentric(boxes) {
+function BoxesConcentric(boxes, num) {
 	//console.log('boxes concentric');
 
 	var next = 0;
@@ -583,7 +572,7 @@ function BoxesConcentric(boxes) {
 
 
 	//i will go for each elements in the boxes array, placing the elements in concentric circles
-	for (let i = 0; i < 46 ; i++) {
+	for (let i = 0; i < num ; i++) {
 
 		console.log('----------------------------------------------------');
 		
@@ -832,11 +821,18 @@ function BoxesConcentric(boxes) {
 
 					} else { //if dont fits we search the position of the next element
 						console.log('paso elseeeeeeeee');					
-						console.log(box.width);
+						console.log('el ancho de la caja : ',box.width);
+						
 						
 
 						if (right[next + 1] != undefined) { //if dont fit in the box, got the z of the next box
 							console.log('pasoooooo if');
+							console.log('parte baja de la primera caja : ',right[next-1].x - right[next-1].len/2);
+							console.log('parte baja de la segunda caja : ',(right[next].x - right[next].len/2));
+							
+							
+							console.log('el hueco entre la anterior caja y la siguiente : ', ((right[next-1].x - right[next-1].len/2) - (right[next].x - right[next].len/2)));
+
 							console.log(Math.abs((Math.abs(right[next-1].x) - Math.abs(right[next-1].len/2)) - (Math.abs(right[next].x) - Math.abs(right[next].len/2))));
 
 							
@@ -1048,13 +1044,21 @@ function BoxesConcentric(boxes) {
 					
 
 				} else if (searchtop) {
+						xx = right[0].x
+						zz = right[0].z
+						leen = right[0].len
+						console.log('x :',xx, 'z :',zz,'len :',leen);
 					console.log('searchtoppp ->>>>>>>>>>');
-					if (top[next] != undefined && ((Math.abs(top[next-1].z) + Math.abs(top[next-1].len/2)) - (Math.abs(top[next].z) + Math.abs(top[next].len/2))) >= box.width) { //fits
+					if (top[next] != undefined && Math.abs(((top[next-1].z) + (top[next-1].len/2)) - ((top[next].z) + (top[next].len/2))) >= box.width) { //fits
 						
 						posx = top[next].x + top[next].len/2 + box.width/2
 						posz = top[next-1].z + top[next-1].len/2 + box.width/2
 
 						console.log('old : ', top[next]);
+
+						console.log('x :',xx, 'z :',zz,'len :',leen);
+
+						
 						
 
 						//replace the old object with the new one
@@ -1062,7 +1066,18 @@ function BoxesConcentric(boxes) {
 						top[next].z = posz
 						top[next].len = box.width
 
-						console.log('new : ',top[next]);
+						console.log('x :',xx, 'z :',zz,'len :',leen);
+
+
+
+						
+						
+
+						right[0].x=xx
+						right[0].z=zz
+						right[0].len=leen
+
+						console.log('new : ',top[next].x);
 
 					}else{
 
@@ -1070,7 +1085,7 @@ function BoxesConcentric(boxes) {
 							console.log('the last element');
 
 							posx = top[next-1].x-top[next-1].len/2+box.width/2
-							posz = top[next-1].z+top[next-1].len/2+box.width/2
+							posz = top[next-1].z + top[next-1].len/2 + box.width/2
 
 							objpush = {
 								x: posx,
@@ -1078,28 +1093,15 @@ function BoxesConcentric(boxes) {
 								len: box.width
 							}
 
-
-							// console.log('las cajas : ',top[next-1].z + top[next-1].len/2);
-							// console.log('next : ', next);
-							// console.log('z : ', posz);
-							// console.log('len : ', top[next-1].len/2);
-							// console.log(top[next-1]);
-							
-							// console.log('la esquina : ', right[0].z+right[0].len/2);
-
-							
-
-
 							if (posz +box.width/2 > right[0].z+right[0].len/2) {
+								console.log('Paso por este iffff');
+								
 								top.push(objpush)
-
 								right.unshift(objpush)
 
 								console.log('los pongo todos a true');
-								console.log('las cajas : ',top[next-1].z + box.width/2);
-								console.log('la esquina : ', right[0].z+right[0].len/2);
-								
-								
+								// console.log('las cajas : ',top[next-1].z + box.width/2);
+								// console.log('la esquina : ', right[0].z+right[0].len/2);
 
 								searchright = true
 								searchbottom = true
@@ -1107,18 +1109,15 @@ function BoxesConcentric(boxes) {
 								searchtop = true
 								next = 0
 							}else{
+								console.log('Paso por este eeeelseeee');
+								
 								top.splice(top.length-1,1) //for delete the first item
 								top.push(objpush)
-
 							}
 						}else{
 							console.log('dont fits :(');
-
-							console.log('donde hay que meterlo : ', (Math.abs(top[next-1].z) + Math.abs(top[next-1].len/2)) - (Math.abs(top[next].z) + Math.abs(top[next].len/2)));
+							console.log('donde hay que meterlo : ', Math.abs(((top[next-1].z) + (top[next-1].len/2)) - ((top[next].z) + (top[next].len/2))));
 							console.log('lado : ',box.width);
-							
-
-							
 
 							posx = parseFloat(top[next + 1].x) + parseFloat(top[next + 1].len/2) + parseFloat(box.width/2)
 							posz = top[next - 1].z + top[next - 1].len/2 + box.width/2
@@ -1133,53 +1132,9 @@ function BoxesConcentric(boxes) {
 			}
 
 		}
-
-
-
 		console.log(searchright);
 
-		// if (!found) {
-		// 	console.log('buscando en bottom');
-		// 	for (let k = 0; k < bottom.length; k++) {
-		// 		if (bottom[k].len >= box.width) {
-		// 			posx = bottom[k].x - bottom[k].len / 2 - box.width / 2
-		// 			posz = bottom[k].z
-		// 			length = bottom[k].len
-
-		// 			bottom.splice(k, 1)
-		// 			objpush = {
-		// 				x: posx,
-		// 				z: posz,
-		// 				len: length
-		// 			}
-		// 			bottom.push(objpush)
-		// 			found = true
-		// 			break
-		// 		}
-
-		// 	}
-		// }
-
-		// if (!found) {
-		// 	console.log('buscando en left');
-		// 	for (let l = 0; l < left.length; l++) {
-
-
-
-		// 	}
-		// }
-
-		// if (!found) {
-		// 	console.log('buscando en top');
-		// 	for (let l = 0; l < top.length; l++) {
-
-
-
-		// 	}
-		// }
-
 		console.log(posx, posz, 'i : ', i);
-
 
 		var entity = document.createElement('a-entity');
 		entity.setAttribute('newisland', {
