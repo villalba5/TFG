@@ -110,7 +110,7 @@ AFRAME.registerComponent('islands', {
 		width: { type: 'number', default: 1 },
 		databox: { type: 'asset' },
 		positioning: { type: 'string', default: 'random' },
-		geometry: { type: 'string', default: 'box' },
+		geometry: { type: 'string', default: 'box' },  // box, cylinder, sphere
 		num: { type: 'number', default: 1 },
 	},
 
@@ -149,11 +149,11 @@ AFRAME.registerComponent('islands', {
 
 		switch (data.geometry) {
 			case "cylinder":
-				//console.log('es un cylinder!!');
-				printCylinders(elements, data.positioning)
+				console.log('es un cylinder!!');
+				printCylinders(elements, data.positioning, data.num)
 				break;
 			default:
-				//console.log('no es un cylinder');
+				console.log('no es un cylinder');
 				printBoxes(elements, data.positioning, data.num)
 				break;
 		}
@@ -326,7 +326,7 @@ function printBoxes(boxes, positioning, num) {
 	}
 }
 
-function printCylinders(cylinders, positioning) {
+function printCylinders(cylinders, positioning, num) {
 	console.log(cylinders, positioning);
 	switch (positioning) {
 		case 'random':
@@ -338,9 +338,18 @@ function printCylinders(cylinders, positioning) {
 			this.fourincircleCylinders(cylinders);
 			break;
 
+		case 'much': //as much in concentric circles
+			this.asMuchCylinder(cylinders,num);
+			break;
 		default:
 			break;
 	}
+}
+
+function asMuchCylinder(cylinders, num){
+	console.log('As much cylinder');
+	console.log('num : ', num);
+	
 }
 
 function randomPositionsCylinders(cylinders) {
@@ -1057,8 +1066,6 @@ function BoxesConcentric(boxes, num) {
 						console.log('old : ', top[next]);
 
 						console.log('x :',xx, 'z :',zz,'len :',leen);
-
-						
 						
 
 						//replace the old object with the new one
@@ -1067,11 +1074,6 @@ function BoxesConcentric(boxes, num) {
 						top[next].len = box.width
 
 						console.log('x :',xx, 'z :',zz,'len :',leen);
-
-
-
-						
-						
 
 						right[0].x=xx
 						right[0].z=zz
