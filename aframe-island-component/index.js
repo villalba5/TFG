@@ -583,7 +583,8 @@ function BoxesConcentric(boxes) {
 
 
 	//i will go for each elements in the boxes array, placing the elements in concentric circles
-	for (let i = 0; i < 40; i++) {
+	for (let i = 0; i < 46 ; i++) {
+
 		console.log('----------------------------------------------------');
 		
 		found = false
@@ -625,6 +626,8 @@ function BoxesConcentric(boxes) {
 					}
 
 				} else if (Math.abs(e3.posz) <= lado / 2) {
+					console.log('search firstcircle bottom');
+					
 					posx = -lado / 2 - box.width / 2
 					if (e3.posx == 0) {
 						posz = lado / 2 - box.width / 2
@@ -633,6 +636,15 @@ function BoxesConcentric(boxes) {
 					}
 					e3.posx = posx - box.width / 2
 					e3.posz = posz - box.width / 2
+					if (Math.abs(e3.posz) > lado / 2) { //if the element is greather than the side box, we must save the other side in the bottom
+						posx = bottom[bottom.length-1].x - bottom[bottom.length-1].len/2 + box.width/2
+						objpush = {
+							x: posx,
+							z: posz,
+							len: box.width,
+						}
+						left.push(objpush)
+					}
 					objpush = {
 						x: posx,
 						z: posz,
@@ -643,18 +655,34 @@ function BoxesConcentric(boxes) {
 					console.log('bottom');
 					console.log(bottom);
 
-					if (Math.abs(e3.posz) > lado / 2) { //if the element is greather than the side box, we must save the other side in the bottom
-						left.push(objpush)
-					}
+					
 				} else if ((e4.posx) <= lado / 2) {
+					console.log('search firstcircle left');
+					console.log(left.length);
+					
+
 					posz = -lado / 2 - box.width / 2
-					if (e4.posx == 0) {
+					if (left.length == 1) {
+						console.log('paso if');
+						
 						//only first time
-						posx = box.width / 2 - lado / 2
-						e4.posx = box.width - lado / 2
+						posx = left[left.length-1].x + left[left.length-1].len/2 + box.width/2
+						e4.posx = box.width - lado/2
+						
 					} else {
-						posx = e4.posx + box.width / 2
+						console.log('paso else');
+						
+						
+						posx = left[left.length-1].x + left[left.length-1].len/2 + box.width/ 2
+						console.log('posx : ',e4.posx);
+
 						e4.posx = box.width + e4.posx
+						console.log('width : ', box.width);
+						console.log('posx : ',e4.posx);
+						
+						
+						console.log('nueva e4 posx : ',e4.posx);
+						
 					}
 					e4.posz = -lado - box.width
 					objpush = {
@@ -662,6 +690,8 @@ function BoxesConcentric(boxes) {
 						z: posz,
 						len: box.width,
 					}
+					console.log(e4.posx,'---------->>>>>>>>>>>>>>>');
+
 					left.push(objpush)
 					console.log('left');
 					console.log(left);
@@ -669,9 +699,14 @@ function BoxesConcentric(boxes) {
 
 
 					if (Math.abs(e4.posx) > lado / 2) { //if the element is greather than the side box, we must save the other side in the bottom
+						console.log('esquina mayor que cuadrado');
+						console.log(e4.posx);
+						
 						top.push(objpush)
 					}
 				} else if (Math.abs(e1.posz) <= lado / 2) {
+					console.log('search firstcircle top');
+
 					posx = lado / 2 + box.width / 2
 					if (e1.posx == 0) { //only the first time3
 						posz = -lado / 2 + box.width / 2
@@ -744,11 +779,11 @@ function BoxesConcentric(boxes) {
 
 				if (searchright) {
 					console.log('buscando en right');
-					if (right[next] != undefined && right[next].len >= box.width) { //fits	
+					if (right[next] != undefined && ((right[next-1].x - right[next-1].len/2) - (right[next].x - right[next].len/2))>=box.width) { //fits	
 						console.log('paso if fits');
 
 						posx = right[next].x + right[next].len / 2 - box.width / 2
-						posz = right[next].z + right[next].len / 2 + box.width / 2
+						posz = parseFloat(right[next].z) + parseFloat(right[next].len / 2) + parseFloat(box.width / 2)
 						length = box.width
 
 						objpush = {
@@ -776,12 +811,17 @@ function BoxesConcentric(boxes) {
 						bottom[0].len = lenaux
 
 						console.log(bottom[0]);
-						
-
-						
-
+					
 						if (right[next + 1] == undefined) {
 							console.log('next == undefined');
+							posx = right[next-1].x - right[next-1].len/2 - box.width/2
+							posz = right[next].z + right[next].len / 2 + box.width / 2
+
+							objpush = {
+								x: posx,
+								z: posz,
+								len: box.width
+							}
 
 							right.splice(right.length-1,1)
 							right.push(objpush)
@@ -791,14 +831,25 @@ function BoxesConcentric(boxes) {
 						next++
 
 					} else { //if dont fits we search the position of the next element
-						console.log('paso elseeeeeeeee');
+						console.log('paso elseeeeeeeee');					
+						console.log(box.width);
+						
 
 						if (right[next + 1] != undefined) { //if dont fit in the box, got the z of the next box
 							console.log('pasoooooo if');
+							console.log(Math.abs((Math.abs(right[next-1].x) - Math.abs(right[next-1].len/2)) - (Math.abs(right[next].x) - Math.abs(right[next].len/2))));
+
 							
-							posx = right[next].x
+							posx = right[next-1].x - right[next-1].len/2 - box.width/2
 							posz = right[next + 1].z + right[next + 1].len / 2 + box.width / 2
 							length = box.width
+							console.log(length);
+
+							right[next].x = posx
+							right[next].z = posz
+							right[next].len = length
+							
+							next++
 
 						} else if (right[next] == undefined) {
 
@@ -822,18 +873,23 @@ function BoxesConcentric(boxes) {
 							right.push(objpush)
 							searchright = false
 							next = 1//for the next circle
-						}
+						}else{
+							//dont fits
+							console.log('else :) :) ');
+							console.log(Math.abs((Math.abs(right[next-1].x) - Math.abs(right[next-1].len/2)) - (Math.abs(right[next].x) - Math.abs(right[next].len/2))));
 
+							
+						}
 					}
 
 				} else if (searchbottom) {
 					console.log('buscando en bottom');
 
-					if (bottom[next] != undefined && bottom[next].len >= box.width) { //fits
-						//console.log('fits');
+					if (bottom[next + 1] != undefined && bottom[next].len >= box.width) { //fits
+						console.log('fits');
 
 						posx = bottom[next].x - bottom[next].len / 2 - box.width / 2
-						posz = bottom[next].z - bottom[next].len / 2 + box.width / 2
+						posz = bottom[next-1].z - bottom[next-1].len / 2 - box.width / 2
 
 						//console.log(bottom[next]);
 						
@@ -846,16 +902,16 @@ function BoxesConcentric(boxes) {
 						
 					} else {
 						//dont fits
-						//console.log('paso por el else');
+						console.log('paso por el else, dont fits');
 						if (bottom[next + 1]==undefined) {
-							//console.log('el next es undefined');
+							console.log('el next es undefined');
 							//console.log(next);
 
 							//console.log('next.len',bottom[next-1].len/2);
 							
 							posx = bottom[next-1].x + bottom[next-1].len/2 - box.width / 2
 							posz = bottom[next-1].z - bottom[next-1].len/2 - box.width / 2
-							//console.log(posx, 'x',posz,'z');
+							console.log(posx, 'x',posz,'z');
 
 							objpush = {
 								x: posx,
@@ -863,18 +919,54 @@ function BoxesConcentric(boxes) {
 								len: box.width
 							}
 
-							bottom.splice(bottom.length-1,1)
+							if ((posz - box.width/2) < (left[0].z - left[0].len/2)) {
+								console.log('me paso de la esquina');
+								
+								left.unshift(objpush)
+
+								searchbottom = false
+								next = 0
+							}else{
+								console.log('elimino el ultimo y añado el mio');
+								
+								bottom.splice(bottom.length-1,1)
+							}
+							
 							bottom.push(objpush)
-							left.unshift(objpush)
-							searchbottom = false
-							next = 0
+						}else{
+							//dont fits
+							console.log('paso else bottom :( ');
+							if (((bottom[next-1].z+bottom[next-1].len/2) - box.width) <= (bottom[next].z+bottom[next].len/2)) {
+								//fits
+								console.log('fits');
+								posx = bottom[next].x-bottom[next].len/2-box.width/2
+								posz = bottom[next-1].z-bottom[next-1].len/2-box.width/2
+
+								console.log('x : ',posx);
+								
+
+								bottom[next].x = posx
+								bottom[next].z = posz
+								bottom[next].len = box.width
+								
+								
+							}else{
+								console.log('dont fits');
+								console.log(((bottom[next-1].z+bottom[next-1].len/2) - box.width));
+								console.log((bottom[next].z+bottom[next].len/2));
+								
+
+							}
+							
 						}
 					}
 					next ++
 				} else if (searchleft) {
 					console.log('estoy en searchleft :)');
 					if (left[next] != undefined && left[next].len >= box.width) { //fits
-						posx = left[next].x+left[next].len/2-box.width/2
+						console.log('fits');
+						
+						posx = left[next - 1].x + left[next - 1].len/2 + box.width/2
 						posz = left[next].z-left[next].len/2-box.width/2
 
 						xaux = top[0].x
@@ -927,8 +1019,29 @@ function BoxesConcentric(boxes) {
 							
 						}else{ //it dont fits
 							console.log('dont fits :(');
-							posx = left[next].x+left[next].len/2-box.width/2
-							posz = left[next + 1].z+left[next + 1].len/2-box.width/2
+
+							if (Math.abs((left[next].x + left[next].len/2)-(left[next-1].x+left[next-1].len/2))>=box.width) {
+								console.log('fits');
+
+								posx = left[next - 1].x + left[next -1].len/2 + box.width/2
+								posz = left[next].z-left[next].len/2-box.width/2
+
+								
+							}else{
+								console.log(left[next].x);
+								console.log(left[next-1].x+left[next-1].len/2);
+								
+								
+								console.log(Math.abs(left[next].x-(left[next-1].x+left[next-1].len/2)));
+								
+								posx = left[next - 1].x + left[next - 1].len/2 + box.width/2
+								posz = left[next + 1].z-left[next + 1].len/2-box.width/2
+							}
+
+							left[next].x = posx
+							left[next].z = posz
+							left[next].len = box.width
+							
 						}
 					}
 					next++
@@ -936,10 +1049,10 @@ function BoxesConcentric(boxes) {
 
 				} else if (searchtop) {
 					console.log('searchtoppp ->>>>>>>>>>');
-					if (top[next] != undefined && ((top[next-1].z + top[next-1].len/2)- top[next].z+top[next].len/2) >= box.width) { //fits
+					if (top[next] != undefined && ((Math.abs(top[next-1].z) + Math.abs(top[next-1].len/2)) - (Math.abs(top[next].z) + Math.abs(top[next].len/2))) >= box.width) { //fits
 						
 						posx = top[next].x + top[next].len/2 + box.width/2
-						posz = top[next].z + top[next].len/2 - box.width/2
+						posz = top[next-1].z + top[next-1].len/2 + box.width/2
 
 						console.log('old : ', top[next]);
 						
@@ -950,23 +1063,6 @@ function BoxesConcentric(boxes) {
 						top[next].len = box.width
 
 						console.log('new : ',top[next]);
-						
-
-						// if (next + 1== left.length) {
-						// 	console.log('es el ultimo');
-							
-						// 	//is the last
-						// 	objpush = {
-						// 		x: posx,
-						// 		z: posz,
-						// 		len: box.width
-						// 	}
-						// 	left.splice(left.length-1,1)
-						// 	left.push(objpush)
-						// 	top.unshift(objpush)
-						// }
-
-
 
 					}else{
 
@@ -976,33 +1072,64 @@ function BoxesConcentric(boxes) {
 							posx = top[next-1].x-top[next-1].len/2+box.width/2
 							posz = top[next-1].z+top[next-1].len/2+box.width/2
 
-							searchright = true
-							searchbottom = true
-							searchleft = true
-							searchtop = true
-							next = -1
+							objpush = {
+								x: posx,
+								z: posz,
+								len: box.width
+							}
+
+
+							// console.log('las cajas : ',top[next-1].z + top[next-1].len/2);
+							// console.log('next : ', next);
+							// console.log('z : ', posz);
+							// console.log('len : ', top[next-1].len/2);
+							// console.log(top[next-1]);
+							
+							// console.log('la esquina : ', right[0].z+right[0].len/2);
+
+							
+
+
+							if (posz +box.width/2 > right[0].z+right[0].len/2) {
+								top.push(objpush)
+
+								right.unshift(objpush)
+
+								console.log('los pongo todos a true');
+								console.log('las cajas : ',top[next-1].z + box.width/2);
+								console.log('la esquina : ', right[0].z+right[0].len/2);
+								
+								
+
+								searchright = true
+								searchbottom = true
+								searchleft = true
+								searchtop = true
+								next = 0
+							}else{
+								top.splice(top.length-1,1) //for delete the first item
+								top.push(objpush)
+
+							}
 						}else{
 							console.log('dont fits :(');
+
+							console.log('donde hay que meterlo : ', (Math.abs(top[next-1].z) + Math.abs(top[next-1].len/2)) - (Math.abs(top[next].z) + Math.abs(top[next].len/2)));
+							console.log('lado : ',box.width);
+							
+
+							
+
 							posx = parseFloat(top[next + 1].x) + parseFloat(top[next + 1].len/2) + parseFloat(box.width/2)
 							posz = top[next - 1].z + top[next - 1].len/2 + box.width/2
 
 							top[next].x = posx
 							top[next].z = posz
 							top[next].len = box.width
-
-							console.log(posx,posz,'<>');
 						}
 					}
-
 					next++
-					
-
-				} else {
-					searchtop = true
-					searchright = true
-					searchbottom = true
-					searchleft = true
-				}
+				} 
 			}
 
 		}
