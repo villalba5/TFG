@@ -1,8 +1,15 @@
+
+
+
 var searchright = true
 var searchbottom = true
 var searchleft = true
 var searchtop = true
 var found = false
+
+var arraypos = []
+var primerCirculo = true
+
 
 AFRAME.registerComponent('newisland', {
 	schema: {
@@ -346,10 +353,87 @@ function printCylinders(cylinders, positioning, num) {
 	}
 }
 
-function asMuchCylinder(cylinders, num){
-	console.log('As much cylinder');
-	console.log('num : ', num);
+
+function calcularPosición( Ax, Az, Bx, Bz, Ra, Rb){
+
 	
+		equation1 = '(('+ Bx +'-x)*('+Bx+'-x))+(('+Bz+'-y)*('+Bz+'-y))='+Math.pow((Ra+Rb),2);
+		console.log(equation1);
+
+		equation2 = '(('+ Ax +'-x)*('+Ax+'-x))+(('+Az+'-y)*('+Az+'-y))='+Math.pow((Ra+Rb),2);
+		console.log(equation2);
+	
+	
+	
+
+	var solutions = nerdamer.solveEquations([equation1,equation2])
+	y = x.toString().split(',');
+	console.log('x : ',y[1], ' z: ',y[3]);
+	console.log('num : ', num);
+}
+
+function asMuchCylinder(cylinders, num){
+	var scene = document.querySelector('a-scene');
+
+	var radio0 = cylinders[0].width/Math.sqrt(Math.PI)
+
+	for (let i = 0; i < num; i++) {
+		const cylinder = cylinders[i];
+
+		radioactual = cylinder.width/Math.sqrt(Math.PI)
+
+		if (i == 0) {
+			// the first element
+			console.log('is the first');
+
+			posx = 0;
+			posz = 0;
+			
+		}else if(i == 1){
+			console.log('im the second cylinder');
+
+			posx = 0;
+			posz = radio0+radioactual
+			
+
+		}else{
+			console.log('im not the first cylinder : ',i);
+			if (primerCirculo) {
+				console.log('in the first circle');
+				
+				valores = calcularPosición(true, 0,0,arraypos[i-1].x, arraypos[i-1].z,radio0,radioactual)
+
+				console.log('valores : '+valores);
+				
+
+			} else {
+				console.log('not in the first circle');
+				
+			}
+
+		}
+
+		objpush = {
+			x : posx,
+			z : posz,
+			radius : radioactual
+		}
+
+		arraypos.push(objpush);
+
+		var entity = document.createElement('a-entity');
+
+		entity.setAttribute('newisland', {
+			'color': 'blue',
+			'depth': cylinder.depth,
+			'height': cylinder.height,
+			'width': cylinder.width,
+			'posx': posx,
+			'posz': posz,
+			'geometry': 'cylinder'
+		});
+		scene.appendChild(entity);	
+	}
 }
 
 function randomPositionsCylinders(cylinders) {

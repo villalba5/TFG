@@ -3,5 +3,8 @@ var algebra = require( 'nerdamer/Algebra.js')
 var calc = require( 'nerdamer/Calculus.js')
 var solve = require( 'nerdamer/Solve.js')
 
-var x = nerdamer.solveEquations(['(x-3)*(x-3)+(y-5)*(y-5)=9', '(2-x)*(2-x)+(3-y)*(3-y)=16'])
-console.log(x.toString());
+var x = nerdamer.solveEquations(['((x)*(x))+((y-8)*(y-8))=36', '((x)*(x))+((y)*(y))=64'])
+y = x.toString().split(',');
+console.log('x : ',y[1], ' y: ',y[3]);
+
+
