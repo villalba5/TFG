@@ -150,6 +150,7 @@ AFRAME.registerComponent('islands', {
 		// create box for each json objet
 
 		var data = this.data;
+		var elem = this.el //html element of the component (<a-entity>)
 		//console.log(data);
 		var elements = JSON.parse(file);
 		//console.log(elements);
@@ -161,7 +162,7 @@ AFRAME.registerComponent('islands', {
 				break;
 			default:
 				console.log('no es un cylinder');
-				printBoxes(elements, data.positioning, data.num)
+				printBoxes(elements, data.positioning, data.num, elem)
 				break;
 		}
 	},
@@ -310,7 +311,7 @@ function printCircles(boxes, scene, topside, bottomside, rightside, leftside) {
 	}
 }
 
-function printBoxes(boxes, positioning, num) {
+function printBoxes(boxes, positioning, num, elem) {
 	console.log(boxes, positioning);
 	switch (positioning) {
 		case 'random':
@@ -327,7 +328,7 @@ function printBoxes(boxes, positioning, num) {
 			break;
 		case 'much':
 			//console.log('es much');
-			BoxesConcentric(boxes, num);
+			BoxesConcentric(boxes, num, elem);
 		default:
 			break;
 	}
@@ -367,9 +368,8 @@ function calcularPosición( Ax, Az, Bx, Bz, Ra, Rb){
 	
 
 	var solutions = nerdamer.solveEquations([equation1,equation2])
-	y = x.toString().split(',');
+	y = solutions.toString().split(',');
 	console.log('x : ',y[1], ' z: ',y[3]);
-	console.log('num : ', num);
 }
 
 function asMuchCylinder(cylinders, num){
@@ -401,7 +401,7 @@ function asMuchCylinder(cylinders, num){
 			if (primerCirculo) {
 				console.log('in the first circle');
 				
-				valores = calcularPosición(true, 0,0,arraypos[i-1].x, arraypos[i-1].z,radio0,radioactual)
+				valores = calcularPosición(0,0,arraypos[i-1].x, arraypos[i-1].z,radio0,radioactual)
 
 				console.log('valores : '+valores);
 				
@@ -605,7 +605,7 @@ function BoxesNear(parboxesams) {
 
 }
 
-function BoxesConcentric(boxes, num) {
+function BoxesConcentric(boxes, num, elem) {
 	//console.log('boxes concentric');
 
 	var next = 0;
@@ -1130,18 +1130,16 @@ function BoxesConcentric(boxes, num) {
 							left[next].x = posx
 							left[next].z = posz
 							left[next].len = box.width
-							
 						}
 					}
 					next++
 					
-
 				} else if (searchtop) {
 						xx = right[0].x
 						zz = right[0].z
 						leen = right[0].len
 						console.log('x :',xx, 'z :',zz,'len :',leen);
-					console.log('searchtoppp ->>>>>>>>>>');
+						console.log('searchtoppp ->>>>>>>>>>');
 					if (top[next] != undefined && Math.abs(((top[next-1].z) + (top[next-1].len/2)) - ((top[next].z) + (top[next].len/2))) >= box.width) { //fits
 						
 						posx = top[next].x + top[next].len/2 + box.width/2
@@ -1230,8 +1228,9 @@ function BoxesConcentric(boxes, num) {
 			'posx': posx,
 			'posz': posz,
 			'color': color,
+			'geometry': 'cylinder'
 		});
-		scene.appendChild(entity);
+		elem.appendChild(entity);
 		console.log('top');
 		console.log(top);
 		console.log('right');
