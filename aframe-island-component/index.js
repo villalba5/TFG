@@ -1,15 +1,8 @@
-
-
-
-var searchright = true
-var searchbottom = true
-var searchleft = true
-var searchtop = true
-var found = false
-
-var arraypos = []
-var primerCirculo = true
-
+let searchright = true
+let searchbottom = true
+let searchleft = true
+let searchtop = true
+let found = false
 
 AFRAME.registerComponent('newisland', {
 	schema: {
@@ -32,32 +25,42 @@ AFRAME.registerComponent('newisland', {
 	 * Called once when component is attached. Generally for initial setup.
 	 */
 	init: function () {
-		var data = this.data;
-		var el = this.el;
-		var loader = new THREE.TextureLoader();
+		let data = this.data;
+		let el = this.el;
+		let loader = new THREE.TextureLoader();
 
 		switch (data.geometry) { //in this switch i detect the geometry that i want to representate
 			case 'box':
 				//console.log('es un boxx');
 
 				this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
+
+				if (data.posx == 0 && data.posz == 0) {
+					this.material = new THREE.MeshStandardMaterial({ color: data.color });
+				} else {
+					this.material = new THREE.MeshStandardMaterial({ map: loader.load("../../../assets/imgs/bordecubos.png") });
+				}
 				break;
 			case 'cylinder':
-				//console.log('es un cyylinder');
-				radius = Math.sqrt((data.width * data.height) / 3.1415);
-				//console.log('radius : ' + radius);
+				console.log('es un cyylinder');
+				//radius = Math.sqrt((data.width * data.height) / 3.1415); //The same base area
+				
+				radius = data.width/2//aprox the same radius
+				console.log('radius : ' + radius);
 
-				this.geometry = new THREE.CylinderBufferGeometry(radius, radius, data.height);
+				this.geometry = new THREE.CylinderBufferGeometry(radius, radius, data.height,50);
+
+				if (data.posx == 0 && data.posz == 0) {
+					this.material = new THREE.MeshStandardMaterial({ color: data.color });
+				} else {
+					this.material = new THREE.MeshStandardMaterial({ map: loader.load("../../../assets/imgs/whiteblackcircle.png") });
+				}
 				break;
 			default:
 				break;
 		}
 
-		if (data.posx == 0 && data.posz == 0) {
-			this.material = new THREE.MeshStandardMaterial({ color: data.color });
-		} else {
-			this.material = new THREE.MeshStandardMaterial({ map: loader.load("../../../assets/imgs/bordecubos.png") });
-		}
+		
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 		this.mesh.position.set(data.posx, data.height / 2, data.posz);
@@ -67,44 +70,6 @@ AFRAME.registerComponent('newisland', {
 		//console.log(this.data);
 		//console.log("Pinto una caja",data.posx, ',', data.posz);
 	},
-
-	/**
-	 * Called when component is attached and when component data changes.
-	 * Generally modifies the entity based on the data.
-	 */
-	update: function (oldData) {
-
-	},
-
-	/**
-	 * Called when a component is removed (e.g., via removeAttribute).
-	 * Generally undoes all modifications to the entity.
-	 */
-	remove: function () { },
-
-	/**
-	 * Called on each scene tick.
-	 */
-	// tick: function (t) { },
-
-	/**
-	 * Called when entity pauses.
-	 * Use to stop or remove any dynamic or background behavior such as events.
-	 */
-	pause: function () { },
-
-	/**
-	 * Called when entity resumes.
-	 * Use to continue or add any dynamic or background behavior such as events.
-	 */
-	play: function () { },
-
-	/**
-	 * Event handlers that automatically get attached or detached based on scene state.
-	 */
-	events: {
-		// click: function (evt) { }
-	}
 });
 
 
@@ -117,7 +82,7 @@ AFRAME.registerComponent('islands', {
 		width: { type: 'number', default: 1 },
 		databox: { type: 'asset' },
 		positioning: { type: 'string', default: 'random' },
-		geometry: { type: 'string', default: 'box' },  // box, cylinder, sphere
+		geometry: { type: 'string', default: 'box' },
 		num: { type: 'number', default: 1 },
 	},
 
@@ -132,7 +97,7 @@ AFRAME.registerComponent('islands', {
 	init: function () {
 		//Load de json file
 		this.loader = new THREE.FileLoader();
-		var data = this.data;
+		let data = this.data;
 		if (data.databox) {
 			this.loader.load(data.databox, this.onDataLoaded.bind(this));
 		}
@@ -149,84 +114,32 @@ AFRAME.registerComponent('islands', {
 
 		// create box for each json objet
 
-		var data = this.data;
-		var elem = this.el //html element of the component (<a-entity>)
+		let data = this.data;
+		var elem = this.el
 		//console.log(data);
-		var elements = JSON.parse(file);
+		let elements = JSON.parse(file);
 		//console.log(elements);
 
-		switch (data.geometry) {
-			case "cylinder":
-				console.log('es un cylinder!!');
-				printCylinders(elements, data.positioning, data.num)
-				break;
-			default:
-				console.log('no es un cylinder');
-				printBoxes(elements, data.positioning, data.num, elem)
-				break;
-		}
+		printBoxes(elements, data.positioning, data.num, elem,data.geometry)
+
+		// switch (data.geometry) {
+		// 	case "cylinder":
+		// 		//console.log('es un cylinder!!');
+		// 		printBoxes(elements, data.positioning)
+		// 		break;
+		// 	default:
+		// 		//console.log('no es un cylinder');
+		// 		printBoxes(elements, data.positioning, data.num, elem)
+		// 		break;
+		// }
 	},
 });
-
-
-AFRAME.registerComponent('concentricislands', {
-
-	schema: {
-		height: { type: 'number', default: 1 },
-		area: { type: 'number', default: 1 },
-		databox: { type: 'asset' },
-		geometry: { type: 'string', default: 'box' }
-	},
-	init: function () {
-		//Load de json file
-		this.loader = new THREE.FileLoader();
-		var data = this.data;
-		if (data.databox) {
-			this.loader.load(data.databox, this.onDataLoaded.bind(this));
-		}
-	},
-
-
-
-	onDataLoaded: function (file) { //in this function i parse the json file and get the objects that i will represent
-
-		var rightside = []
-		var leftside = []
-		var topside = []
-		var bottomside = []
-
-
-		console.log('entrando onDataLoaded');
-
-		// create box for each json objet
-
-		var data = this.data;
-		console.log(data);
-
-		//console.log(data);
-		var elements = JSON.parse(file);
-		console.log(elements);
-
-		var scene = document.querySelector('a-scene');
-
-		printFirst(elements[0], scene, rightside, leftside, topside, bottomside); //print the first element in the center of the scene
-
-		console.log(rightside);
-
-
-		printCircles(elements, scene, rightside, leftside, topside, bottomside);
-	},
-});
-
-
-
-
 
 //-----FUNCTIONS-----
 
 function colocar(scene, depth, height, width, x, z, color) {
 
-	var entity = document.createElement('a-entity');
+	let entity = document.createElement('a-entity');
 
 	entity.setAttribute('newisland', {
 		'color': color,
@@ -244,7 +157,7 @@ function colocar(scene, depth, height, width, x, z, color) {
 function printFirst(box, scene, rightside, leftside, topside, bottomside) {
 	console.log('printFirst');
 
-	var objPush = {
+	let objPush = {
 		posx: 0,
 		posz: Math.abs(box.width / 2),
 		len: box.width,
@@ -252,35 +165,35 @@ function printFirst(box, scene, rightside, leftside, topside, bottomside) {
 	rightside.push(1)
 	rightside.push(objPush)
 
-	var objPush = {
+	let objPush2 = {
 		posx: 0,
 		posz: -Math.abs(box.width / 2),
 		len: box.width,
 	}
 	leftside.push(1)
-	leftside.push(objPush)
+	leftside.push(objPush2)
 
-	var objPush = {
+	let objPush3 = {
 		posx: Math.abs(box.width / 2),
 		posz: 0,
 		len: box.width,
 	}
 	topside.push(1)
-	topside.push(objPush)
+	topside.push(objPush3)
 
-	var objPush = {
+	let objPush4 = {
 		posx: -Math.abs(box.width / 2),
 		posz: 0,
 		len: box.width,
 	}
 	bottomside.push(1)
-	bottomside.push(objPush)
+	bottomside.push(objPush4)
 
 	colocar(scene, box.depth, box.height, box.width, 0, 0, 'red')
 }
 
 function printCircles(boxes, scene, topside, bottomside, rightside, leftside) {
-	var e2 = {
+	let e2 = {
 		x: 0,
 		z: 0,
 		next: 0
@@ -296,7 +209,7 @@ function printCircles(boxes, scene, topside, bottomside, rightside, leftside) {
 			e2.z = rightside[0].width / 2 + box.width
 			colocar(scene, box.depth, box.height, box.width, posx, posz, 'green')
 			rightside.splice(rightside[0], 1)
-			var objPush = {
+			let objPush = {
 				posx: posx,
 				posz: posz,
 				len: box.width,
@@ -311,7 +224,7 @@ function printCircles(boxes, scene, topside, bottomside, rightside, leftside) {
 	}
 }
 
-function printBoxes(boxes, positioning, num, elem) {
+function printBoxes(boxes, positioning, num, elem,geometry) {
 	console.log(boxes, positioning);
 	switch (positioning) {
 		case 'random':
@@ -328,347 +241,61 @@ function printBoxes(boxes, positioning, num, elem) {
 			break;
 		case 'much':
 			//console.log('es much');
-			BoxesConcentric(boxes, num, elem);
-		default:
-			break;
-	}
-}
-
-function printCylinders(cylinders, positioning, num) {
-	console.log(cylinders, positioning);
-	switch (positioning) {
-		case 'random':
-			//console.log('es raaaandom');
-			this.randomPositionsCylinders(cylinders);
-			break;
-		case 'four':
-			//console.log('es four');
-			this.fourincircleCylinders(cylinders);
-			break;
-
-		case 'much': //as much in concentric circles
-			this.asMuchCylinder(cylinders,num);
-			break;
+			BoxesConcentric(boxes, num,elem,geometry);
 		default:
 			break;
 	}
 }
 
 
-function calcularPosición( Ax, Az, Bx, Bz, Ra, Rb){
 
-	
-		equation1 = '(('+ Bx +'-x)*('+Bx+'-x))+(('+Bz+'-y)*('+Bz+'-y))='+Math.pow((Ra+Rb),2);
-		console.log(equation1);
-
-		equation2 = '(('+ Ax +'-x)*('+Ax+'-x))+(('+Az+'-y)*('+Az+'-y))='+Math.pow((Ra+Rb),2);
-		console.log(equation2);
-	
-	
-	
-
-	var solutions = nerdamer.solveEquations([equation1,equation2])
-	y = solutions.toString().split(',');
-	console.log('x : ',y[1], ' z: ',y[3]);
-}
-
-function asMuchCylinder(cylinders, num){
-	var scene = document.querySelector('a-scene');
-
-	var radio0 = cylinders[0].width/Math.sqrt(Math.PI)
-
-	for (let i = 0; i < num; i++) {
-		const cylinder = cylinders[i];
-
-		radioactual = cylinder.width/Math.sqrt(Math.PI)
-
-		if (i == 0) {
-			// the first element
-			console.log('is the first');
-
-			posx = 0;
-			posz = 0;
-			
-		}else if(i == 1){
-			console.log('im the second cylinder');
-
-			posx = 0;
-			posz = radio0+radioactual
-			
-
-		}else{
-			console.log('im not the first cylinder : ',i);
-			if (primerCirculo) {
-				console.log('in the first circle');
-				
-				valores = calcularPosición(0,0,arraypos[i-1].x, arraypos[i-1].z,radio0,radioactual)
-
-				console.log('valores : '+valores);
-				
-
-			} else {
-				console.log('not in the first circle');
-				
-			}
-
-		}
-
-		objpush = {
-			x : posx,
-			z : posz,
-			radius : radioactual
-		}
-
-		arraypos.push(objpush);
-
-		var entity = document.createElement('a-entity');
-
-		entity.setAttribute('newisland', {
-			'color': 'blue',
-			'depth': cylinder.depth,
-			'height': cylinder.height,
-			'width': cylinder.width,
-			'posx': posx,
-			'posz': posz,
-			'geometry': 'cylinder'
-		});
-		scene.appendChild(entity);	
-	}
-}
-
-function randomPositionsCylinders(cylinders) {
-
-	var scene = document.querySelector('a-scene');
-
-	cylinders.forEach(function (cylinder) {
-
-		var posx = Math.floor(Math.random() * 11) * Math.pow(-1, Math.floor(Math.random() * 2))
-		var posz = Math.floor(Math.random() * 11) * Math.pow(-1, Math.floor(Math.random() * 2))
-
-		//console.log('<<<<<<<<< pintando nuevo cylinder >>>>>>>>>>');
-		//console.log(cylinder);
-
-		var entity = document.createElement('a-entity');
-
-		entity.setAttribute('newisland', {
-			'color': 'blue',
-			'depth': cylinder.depth,
-			'height': cylinder.height,
-			'width': cylinder.width,
-			'posx': posx,
-			'posz': posz,
-			'geometry': 'cylinder'
-		});
-		scene.appendChild(entity);
-	});
-}
-
-
-function BoxesFourInCircle(boxes) {
-	//in this function i'm going to place the first box in the center and the next in concentric circles, 4 for circle
-
-	var scene = document.querySelector('a-scene');
-	const margin = 0.1
-
-	for (let index = 0; index < boxes.length; index++) {
-		const box = boxes[index];
-		numcircles = Math.ceil(boxes.length / 4)
-		//console.log('Numero de boxes : ' + boxes.length + ' Numero de circulos : ' + numcircles);
-
-		switch (index) { //the first box in the middle
-			case 0:
-				posx = 0
-				posz = 0
-				break;
-			case 1:
-				posx = 0
-				posz = boxes[0].depth / 2 + margin + boxes[index].depth / 2
-				break
-			case 2:
-				posz = 0
-				posx = -(boxes[0].width / 2) - margin - boxes[index].width / 2
-				break
-			case 3:
-				posx = 0
-				posz = -(boxes[0].depth / 2) - margin - boxes[index].depth / 2
-				break
-			case 4:
-				posz = 0
-				posx = (boxes[0].width / 2) + margin + boxes[index].width / 2
-				break
-			default:
-				console.log('error en el switch de los index four in circle');
-				break;
-		}
-		var entity = document.createElement('a-entity');
-
-		entity.emit('physicscollided', false);
-
-		entity.setAttribute('newisland', {
-			'depth': box.depth,
-			'height': box.height,
-			'width': box.width,
-			'posx': posx,
-			'posz': posz
-		});
-		scene.appendChild(entity);
-	}
-
-	entity.addEventListener('physicscollided', function (event) {
-		console.log('Entity collided with', event.detail.collidingEntity);
-		//Ahora deberemos manejar la posición para que no choque con ninguno
-	});
-}
-
-function BoxesRandomPositions(boxes) {
-
-	var scene = document.querySelector('a-scene');
-
-	boxes.forEach(function (box) {
-
-		var posx = Math.floor(Math.random() * 11) * Math.pow(-1, Math.floor(Math.random() * 2))
-		var posz = Math.floor(Math.random() * 11) * Math.pow(-1, Math.floor(Math.random() * 2))
-
-		//console.log('<<<<<<<<< pintando nuevo box >>>>>>>>>>');
-		//console.log(box);
-
-		var entity = document.createElement('a-entity');
-
-		entity.setAttribute('newisland', {
-			'color': 'blue',
-			'depth': box.depth,
-			'height': box.height,
-			'width': box.width,
-			'posx': posx,
-			'posz': posz
-		});
-		scene.appendChild(entity);
-	});
-
-}
-
-function fourincircleCylinders(cylinders) {
-	//console.log(cylinders);
-	var scene = document.querySelector('a-scene');
-	const margin = 0.1
-	numcircles = Math.ceil(cylinders.length / 4)
-	//console.log('Numero de cylinders : ' + cylinders.length + ' Numero de circulos : ' + numcircles);
-
-	radius = []
-
-	for (let index = 0; index < cylinders.length; index++) {
-		const cylinder = cylinders[index];
-		radius.push(Math.sqrt((cylinders[index].width * cylinders[index].height) / 3.1415)); //Array os radius
-
-		switch (index) { //the first cylinder in the middle
-			case 0:
-				posx = 0
-				posz = 0
-				break;
-			case 1:
-				posx = 0
-				posz = radius[0] + margin + radius[index]
-				break
-			case 2:
-				posz = 0
-				posx = -(radius[0]) - margin - radius[index]
-				break
-			case 3:
-				posx = 0
-				posz = -(radius[0]) - margin - radius[index]
-				break
-			case 4:
-				posz = 0
-				posx = radius[0] + margin + radius[index]
-				break
-			default:
-				console.log('error en el switch de los index four in circle');
-				break;
-		}
-		var entity = document.createElement('a-entity');
-
-		entity.setAttribute('newisland', {
-			'depth': cylinder.depth,
-			'height': cylinder.height,
-			'width': cylinder.width,
-			'posx': posx,
-			'posz': posz,
-			'geometry': 'cylinder'
-		});
-		scene.appendChild(entity);
-	}
-}
-
-function BoxesNear(parboxesams) {
-	//Algoritm to push nearest of the center
-	//console.log('BoxesNear');
-
-}
-
-function BoxesConcentric(boxes, num, elem) {
+function BoxesConcentric(boxes, num, elem, geometry) {
 	//console.log('boxes concentric');
 
-	var next = 0;
+	let next = 0;
 
-	var scene = document.querySelector('a-scene');
-	var lado = boxes[0].width;
+	let scene = document.querySelector('a-scene');
+	let lado = boxes[0].width;
 
 	//think if i need the corners ???
 
-	var e1 = { //upper right
+	let e1 = { //upper right
 		posx: 0,
 		posz: 0
 	}
-	var e1posz = 0
-	var e2 = { //down right
+	let e1posz = 0
+	let e2 = { //down right
 		posx: 0,
 		posz: 0
 	}
-	var e2posx = 0
-	var e3 = { //down left
+	let e2posx = 0
+	let e3 = { //down left
 		posx: 0,
 		posz: 0
 	}
-	var e3posz = 0
-	var e4 = { // upper left
+	let e3posz = 0
+	let e4 = { // upper left
 		posx: 0,
 		posz: 0
 	}
-	var e4posx = 0
+	let e4posx = 0
 
 	//i have one list for each side, one for the rigth, other for the left, other for the top and other for the bottom side.
 	//in each array, i save an object that have the position x and y and the length of the segment
 
-	var right = []
-	var left = []
-	var top = []
-	var bottom = []
-	var firstcircle = true
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	let right = []
+	let left = []
+	let top = []
+	let bottom = []
+	let firstcircle = true
 
 
 	//i will go for each elements in the boxes array, placing the elements in concentric circles
 	for (let i = 0; i < num ; i++) {
 
 		console.log('----------------------------------------------------');
-		
+		console.log( 'i : ', i);
+
 		found = false
 		const box = boxes[i];
 		color = '#00ffff' //light blue
@@ -841,31 +468,25 @@ function BoxesConcentric(boxes, num, elem) {
 					next++
 
 				}
-
-
 			} else {
-
-
-
-
-
-
-
-
-
-
 				//i'm not in the first circle
 				console.log('circunferencias concéntricas');
 				console.log(next, 'next');
-				
 
 				if (searchright) {
 					console.log('buscando en right');
 					if (right[next] != undefined && ((right[next-1].x - right[next-1].len/2) - (right[next].x - right[next].len/2))>=box.width) { //fits	
 						console.log('paso if fits');
 
-						posx = right[next].x + right[next].len / 2 - box.width / 2
-						posz = parseFloat(right[next].z) + parseFloat(right[next].len / 2) + parseFloat(box.width / 2)
+						posx = right[next-1].x - right[next-1].len / 2 - box.width / 2
+
+						if ((right[next].z + right[next].len/2)<=(right[next-1].z - right[next-1].len/2)) {
+							console.log('es mayor el anterior');
+							posz = parseFloat(right[next-1].z) - parseFloat(right[next-1].len / 2) + parseFloat(box.width / 2)
+						}else{
+							console.log('es mayor el actual');
+							posz = parseFloat(right[next].z) + parseFloat(right[next].len / 2) + parseFloat(box.width / 2)
+						}
 						length = box.width
 
 						objpush = {
@@ -876,11 +497,10 @@ function BoxesConcentric(boxes, num, elem) {
 
 						console.log(right[next]);
 						
-						var xaux = bottom[0].x
-						var zaux = bottom[0].z
-						var lenaux = bottom[0].len
+						let xaux = bottom[0].x
+						let zaux = bottom[0].z
+						let lenaux = bottom[0].len
 												
-
 						//update the object
 						right[next].x = posx
 						right[next].z = posz
@@ -966,38 +586,37 @@ function BoxesConcentric(boxes, num, elem) {
 							//dont fits
 							console.log('else :) :) ');
 							console.log(Math.abs((Math.abs(right[next-1].x) - Math.abs(right[next-1].len/2)) - (Math.abs(right[next].x) - Math.abs(right[next].len/2))));
-
-							
 						}
 					}
-
 				} else if (searchbottom) {
 					console.log('buscando en bottom');
-
-					if (bottom[next + 1] != undefined && bottom[next].len >= box.width) { //fits
+					
+					if (bottom[next + 1] != undefined && (Math.abs((bottom[next-1].z - bottom[next-1].len/2) - (bottom[next].z - bottom[next].len/2)))>=box.width) { //fits
 						console.log('fits');
 
 						posx = bottom[next].x - bottom[next].len / 2 - box.width / 2
-						posz = bottom[next-1].z - bottom[next-1].len / 2 - box.width / 2
 
-						//console.log(bottom[next]);
+
+
+						if ((bottom[next].x - bottom[next].len/2)>bottom[next-1].x+bottom[next-1].len/2) {
+							posx = bottom[next-1].x + bottom[next-1].len / 2 - box.width / 2
+						}
 						
+
+						posz = bottom[next-1].z - bottom[next-1].len / 2 - box.width / 2
+						//console.log(bottom[next]);	
 						//update the object
 						bottom[next].x = posx
 						bottom[next].z = posz
-						bottom[next].len = box.width
-						
-						//console.log(bottom[next]);
-						
+						bottom[next].len = box.width						
+						//console.log(bottom[next]);	
 					} else {
 						//dont fits
 						console.log('paso por el else, dont fits');
 						if (bottom[next + 1]==undefined) {
 							console.log('el next es undefined');
 							//console.log(next);
-
-							//console.log('next.len',bottom[next-1].len/2);
-							
+							//console.log('next.len',bottom[next-1].len/2);	
 							posx = bottom[next-1].x + bottom[next-1].len/2 - box.width / 2
 							posz = bottom[next-1].z - bottom[next-1].len/2 - box.width / 2
 							console.log(posx, 'x',posz,'z');
@@ -1010,17 +629,13 @@ function BoxesConcentric(boxes, num, elem) {
 
 							if ((posz - box.width/2) < (left[0].z - left[0].len/2)) {
 								console.log('me paso de la esquina');
-								
 								left.unshift(objpush)
-
 								searchbottom = false
 								next = 0
 							}else{
 								console.log('elimino el ultimo y añado el mio');
-								
 								bottom.splice(bottom.length-1,1)
 							}
-							
 							bottom.push(objpush)
 						}else{
 							//dont fits
@@ -1032,31 +647,39 @@ function BoxesConcentric(boxes, num, elem) {
 								posz = bottom[next-1].z-bottom[next-1].len/2-box.width/2
 
 								console.log('x : ',posx);
-								
-
+							
 								bottom[next].x = posx
 								bottom[next].z = posz
 								bottom[next].len = box.width
-								
 								
 							}else{
 								console.log('dont fits');
 								console.log(((bottom[next-1].z+bottom[next-1].len/2) - box.width));
 								console.log((bottom[next].z+bottom[next].len/2));
-								
-
-							}
-							
+							}					
 						}
 					}
 					next ++
 				} else if (searchleft) {
 					console.log('estoy en searchleft :)');
-					if (left[next] != undefined && left[next].len >= box.width) { //fits
+					if (left[next] != undefined && (Math.abs((left[next].x + left[next].len/2) - (left[next-1].x + left[next-1].len/2))) >= box.width) { //fits
 						console.log('fits');
 						
 						posx = left[next - 1].x + left[next - 1].len/2 + box.width/2
 						posz = left[next].z-left[next].len/2-box.width/2
+
+						if (Math.abs((parseFloat(left[next].z)-parseFloat(left[next].len/2)))<Math.abs(((left[next-1].z+left[next-1].len/2)))&&(next!=1)) {
+							console.log('el anterior está más a la izquierda');
+							console.log('next',parseFloat(left[next].z)-parseFloat(left[next].len/2));
+							
+							posz = left[next-1].z+left[next-1].len/2-box.width/2
+
+						}
+
+						console.log(Math.abs((left[next].z-left[next].len/2)));
+						console.log(Math.abs(((left[next-1].z-left[next-1].len/2))));
+						
+						
 
 						xaux = top[0].x
 						zaux = top[0].z
@@ -1085,12 +708,28 @@ function BoxesConcentric(boxes, num, elem) {
 						}
 						
 					}else{
+						if (left[next + 1] != undefined){
+							console.log('Entro por el dont fits or undefined');
+
+							console.log(Math.abs((left[next].x + left[next].len/2) - (left[next-1].x + left[next-1].len/2)));
+							
+							
+
+							console.log(left[next].x+left[next].len/2,' : Parte de arriba del actual');
+							console.log(left[next-1].x+left[next-1].len/2,' : Parte de arriba del anterior');
+							console.log(box.width);
+							
+
+						}
+
+						
+						
+
 						if (left[next + 1] == undefined) { //is the last element
 							console.log('the last --->');
 
 							console.log(next,'next');
 							
-
 							posx = left[next-1].x+left[next-1].len/2+box.width/2
 							posz = left[next-1].z+left[next-1].len/2-box.width/2
 
@@ -1109,22 +748,25 @@ function BoxesConcentric(boxes, num, elem) {
 						}else{ //it dont fits
 							console.log('dont fits :(');
 
-							if (Math.abs((left[next].x + left[next].len/2)-(left[next-1].x+left[next-1].len/2))>=box.width) {
+							if (Math.abs((left[next].x - left[next].len/2)-(left[next-1].x+left[next-1].len/2))>=box.width) {
 								console.log('fits');
 
 								posx = left[next - 1].x + left[next -1].len/2 + box.width/2
 								posz = left[next].z-left[next].len/2-box.width/2
+								if (Math.abs((parseFloat(left[next].z)-parseFloat(left[next].len/2)))<Math.abs(((left[next-1].z-left[next-1].len/2)))) {
+									console.log('el anterior está más a la izquierda');
+									
+									posz = left[next-1].z+left[next-1].len/2-box.width/2
 
+								}
 								
 							}else{
 								console.log(left[next].x);
 								console.log(left[next-1].x+left[next-1].len/2);
-								
-								
 								console.log(Math.abs(left[next].x-(left[next-1].x+left[next-1].len/2)));
 								
 								posx = left[next - 1].x + left[next - 1].len/2 + box.width/2
-								posz = left[next + 1].z-left[next + 1].len/2-box.width/2
+								posz = left[next + 1 ].z-left[next + 1].len/2-box.width/2
 							}
 
 							left[next].x = posx
@@ -1133,42 +775,61 @@ function BoxesConcentric(boxes, num, elem) {
 						}
 					}
 					next++
+
+
+
+
+
+
 					
+
 				} else if (searchtop) {
 						xx = right[0].x
 						zz = right[0].z
 						leen = right[0].len
 						console.log('x :',xx, 'z :',zz,'len :',leen);
-						console.log('searchtoppp ->>>>>>>>>>');
+					console.log('searchtoppp ->>>>>>>>>>');
 					if (top[next] != undefined && Math.abs(((top[next-1].z) + (top[next-1].len/2)) - ((top[next].z) + (top[next].len/2))) >= box.width) { //fits
+						console.log('fits in the next position');
 						
 						posx = top[next].x + top[next].len/2 + box.width/2
 						posz = top[next-1].z + top[next-1].len/2 + box.width/2
 
-						console.log('old : ', top[next]);
+						if (((top[next-1].x) - (top[next-1].len/2))>(top[next].x) + (top[next].len/2)) {
+							posx = top[next-1].x - top[next-1].len/2 + box.width/2
 
-						console.log('x :',xx, 'z :',zz,'len :',leen);
-						
+						}
 
-						//replace the old object with the new one
-						top[next].x = posx
-						top[next].z = posz
-						top[next].len = box.width
+						console.log('position :', posx ,',',posz);
+						console.log('next :',next);
 
-						console.log('x :',xx, 'z :',zz,'len :',leen);
+						if (next == top.length-1) {
+							console.log('the last element of top');
+							posx = top[next-1].x - top[next-1].len/2 + box.width/2
+							
+							top.pop()
+							objpush = {
+								x: posx,
+								z: posz,
+								len: box.width
+							}
+							top.push(objpush)
+							
+						}else{
 
-						right[0].x=xx
-						right[0].z=zz
-						right[0].len=leen
+							//replace the old object with the new one
+							top[next].x = posx
+							top[next].z = posz
+							top[next].len = box.width
 
-						console.log('new : ',top[next].x);
+						}
 
 					}else{
 
 						if (top[next + 1] == undefined) { //is the last element
 							console.log('the last element');
 
-							posx = top[next-1].x-top[next-1].len/2+box.width/2
+							posx = top[next-1].x+top[next-1].len/2-box.width/2
 							posz = top[next-1].z + top[next-1].len/2 + box.width/2
 
 							objpush = {
@@ -1220,7 +881,7 @@ function BoxesConcentric(boxes, num, elem) {
 
 		console.log(posx, posz, 'i : ', i);
 
-		var entity = document.createElement('a-entity');
+		let entity = document.createElement('a-entity');
 		entity.setAttribute('newisland', {
 			'depth': box.depth,
 			'height': box.height,
@@ -1228,7 +889,7 @@ function BoxesConcentric(boxes, num, elem) {
 			'posx': posx,
 			'posz': posz,
 			'color': color,
-			'geometry': 'cylinder'
+			'geometry':geometry,
 		});
 		elem.appendChild(entity);
 		console.log('top');
@@ -1240,4 +901,5 @@ function BoxesConcentric(boxes, num, elem) {
 		console.log('left');
 		console.log(left);
 	}
+	//All the elements has been placed in the scene, in the second iteration i'm going to apply the attract-repulsion algorithm 
 } 
