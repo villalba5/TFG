@@ -76,7 +76,6 @@ AFRAME.registerComponent('newisland', {
 
 AFRAME.registerComponent('islands', {
 	schema: {
-		id: { type: 'number', default: Math.floor(Math.random() * 1000000) + 1 }, //random number between 1 and 1.000.000
 		depth: { type: 'number', default: 1 },
 		height: { type: 'number', default: 1 },
 		width: { type: 'number', default: 1 },
@@ -119,6 +118,10 @@ AFRAME.registerComponent('islands', {
 		//console.log(data);
 		let elements = JSON.parse(file);
 		//console.log(elements);
+		console.log('iiiiiidddddd');
+		
+		console.log(elements[0].id);
+		
 
 		printBoxes(elements, data.positioning, data.num, elem,data.geometry)
 
@@ -225,6 +228,7 @@ function printCircles(boxes, scene, topside, bottomside, rightside, leftside) {
 }
 
 function printBoxes(boxes, positioning, num, elem,geometry) {
+	
 	console.log(boxes, positioning);
 	switch (positioning) {
 		case 'random':
@@ -247,10 +251,84 @@ function printBoxes(boxes, positioning, num, elem,geometry) {
 	}
 }
 
+function calculatedistance(element, actual){
+	console.log('entro en calculatedistance');
+	console.log('element : ',element);
+	console.log('actual :',actual);
+	
+	return Math.sqrt(Math.pow(element.posx-actual.posx,2)+Math.pow(element.posz-actual.posz,2));
+}
+
+function findnear(actual, rest) {
+
+	console.log('in findnear');
+	console.log('actual',actual);
+	console.log('rest',rest);
+
+	result = []
+
+	for (let i = 0; i < rest.length; i++) {
+		const element = rest[i];
+		if(calculatedistance(element,actual) < 6 && element.id != actual.id){
+			console.log('esta cercaaa');
+			
+			result.push(element);
+		}
+	}
+
+
+	return result;
+	
+	
+}
+
+function bringcloser(actual, other){
+	console.log('distancia : ',calculatedistance(actual,other));
+	
+	delta = calculatedistance(actual,other)-(actual.width/2+other.width/2);
+	console.log('delta',delta);
+	
+}
+
+function atractrepulsion(allelements,scene){
+	console.log('------>');
+	console.log(allelements);
+	console.log('<-----');
+
+	for (let i = 0; i < allelements.length; i++) {
+		const element = allelements[i]; //the center. around this element we atract the rest that are in a radious of 11
+		//filtered = allelements.filter(el => el.distancemiddle )
+
+		filtered = findnear(element, allelements)
+
+		console.log(filtered);
+
+		//in filtered we have the cylinders near us
+		//now we have to atract them
+
+		filtered.forEach(near => {
+			bringcloser(element,near)
+		});
+		
+		
+	}
+
+	let elementid = allelements[0].id
+	
+	var el = scene.querySelector('#'+elementid);
+
+	console.log(el);
+
+	console.log('width : ',el.getAttribute('width'));
+	
+	//el.setAttribute('animation', "property: position; to: 1 8 -10");
+}
+
 
 
 function BoxesConcentric(boxes, num, elem, geometry) {
 	//console.log('boxes concentric');
+	
 
 	let next = 0;
 
@@ -263,22 +341,18 @@ function BoxesConcentric(boxes, num, elem, geometry) {
 		posx: 0,
 		posz: 0
 	}
-	let e1posz = 0
 	let e2 = { //down right
 		posx: 0,
 		posz: 0
 	}
-	let e2posx = 0
 	let e3 = { //down left
 		posx: 0,
 		posz: 0
 	}
-	let e3posz = 0
 	let e4 = { // upper left
 		posx: 0,
 		posz: 0
 	}
-	let e4posx = 0
 
 	//i have one list for each side, one for the rigth, other for the left, other for the top and other for the bottom side.
 	//in each array, i save an object that have the position x and y and the length of the segment
@@ -289,9 +363,17 @@ function BoxesConcentric(boxes, num, elem, geometry) {
 	let bottom = []
 	let firstcircle = true
 
+	let allelements = []
+
 
 	//i will go for each elements in the boxes array, placing the elements in concentric circles
 	for (let i = 0; i < num ; i++) {
+
+		id = Math.random().toString(36).slice(2); //random alphanumeric
+		console.log('id 1: '+id);
+		id='a'+id //because the id cant start with number
+		console.log('id 2: '+id);
+
 
 		console.log('----------------------------------------------------');
 		console.log( 'i : ', i);
@@ -881,7 +963,20 @@ function BoxesConcentric(boxes, num, elem, geometry) {
 
 		console.log(posx, posz, 'i : ', i);
 
+		console.log('el id es : ' + id);
+
+		elempush = {
+			id : id,
+			distancemiddle : Math.sqrt(Math.pow(posx,2)+Math.pow(posz,2)),
+			width : box.width,
+			posx : posx,
+			posz: posz
+		}
+		
+		allelements.push(elempush);
+
 		let entity = document.createElement('a-entity');
+		entity.setAttribute('id',id);
 		entity.setAttribute('newisland', {
 			'depth': box.depth,
 			'height': box.height,
@@ -902,4 +997,8 @@ function BoxesConcentric(boxes, num, elem, geometry) {
 		console.log(left);
 	}
 	//All the elements has been placed in the scene, in the second iteration i'm going to apply the attract-repulsion algorithm 
+	
+	atractrepulsion(allelements,scene);
+	
+
 } 
