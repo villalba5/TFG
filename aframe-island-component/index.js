@@ -275,18 +275,32 @@ function findnear(actual, rest) {
 			result.push(element);
 		}
 	}
-
-
 	return result;
-	
-	
+}
+
+//returns de (Vx,Vz) unitary vector 
+function calculatevector(actual, other) {
+	//the vector OA = actual - other
+
+	OA ={
+		posx : actual.posx - other.posx ,
+		posz : actual.posz - other.posz
+	}
+
 }
 
 function bringcloser(actual, other){
 	console.log('distancia : ',calculatedistance(actual,other));
 	
 	delta = calculatedistance(actual,other)-(actual.width/2+other.width/2);
+	vector = calculatevector(actual,other) //returns an object, the vector with Vx and Vy
+	console.log('vector :',vector);
+	
 	console.log('delta',delta);
+	while (delta>0.05) {
+
+		
+	}
 	
 }
 
