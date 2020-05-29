@@ -252,26 +252,29 @@ function printBoxes(boxes, positioning, num, elem,geometry) {
 }
 
 function calculatedistance(element, actual){
-	console.log('entro en calculatedistance');
-	console.log('element : ',element);
-	console.log('actual :',actual);
+	// console.log('entro en calculatedistance');
+	// console.log('element : ',element);
+	// console.log('actual :',actual);
 	
 	return Math.sqrt(Math.pow(element.posx-actual.posx,2)+Math.pow(element.posz-actual.posz,2));
 }
 
+function caculatedelta(center, satelite){
+
+}
+
 function findnear(actual, rest) {
 
-	console.log('in findnear');
-	console.log('actual',actual);
-	console.log('rest',rest);
+	// console.log('in findnear');
+	// console.log('actual',actual);
+	// console.log('rest',rest);
 
 	result = []
 
 	for (let i = 0; i < rest.length; i++) {
 		const element = rest[i];
 		if(calculatedistance(element,actual) < 6 && element.id != actual.id){
-			console.log('esta cercaaa');
-			
+			//console.log('esta cercaaa');
 			result.push(element);
 		}
 	}
@@ -279,28 +282,72 @@ function findnear(actual, rest) {
 }
 
 //returns de (Vx,Vz) unitary vector 
-function calculatevector(actual, other) {
+function calculateunitaryvector(actual, other) {
 	//the vector OA = actual - other
-
+	x = other.posx - actual.posx
+	//console.log(other.posx,x);
+	z = other.posz -actual.posz 
+	//console.log('vector nonunitary : (',x,',',z,')');
+	modulo = Math.sqrt(Math.pow(x,2)+Math.pow(z,2))
+	//console.log('module :', modulo);
+	
 	OA ={
-		posx : actual.posx - other.posx ,
-		posz : actual.posz - other.posz
+		posx : x/modulo ,
+		posz : z/modulo
 	}
+
+	return OA
 
 }
 
-function bringcloser(actual, other){
-	console.log('distancia : ',calculatedistance(actual,other));
+function movetocloserposition(cylinder,unitary,scene,allelements) {
+		console.log(
+			'cylinder',cylinder,
+			'vector',unitary
+		);
+
+		var el = scene.querySelector('#'+cylinder.id);
+
+		x = unitary.posx
+		z = unitary.posz
+
+		console.log('newposition :('+cylinder.posx+x+','+cylinder.posz+z+')');
+		
+		
+		el.setAttribute('animation', "property: position; to: "+x+z);
+
+
+		allelements.forEach(element => {
+			if (element.id==cylinder.id) {
+				element.posx = cylinder.posx+x;
+				element.posz = cylinder.posz+z
+			}
+		});
+		
+		
+}
+
+function bringcloser(center, satelite,scene,allelements){
+	console.log('distancia : ',calculatedistance(allelements[center],allelements[satelite]));
 	
-	delta = calculatedistance(actual,other)-(actual.width/2+other.width/2);
-	vector = calculatevector(actual,other) //returns an object, the vector with Vx and Vy
-	console.log('vector :',vector);
+	delta = calculatedistance(center,satelite)-(center.width/2+satelite.width/2);
+	
 	
 	console.log('delta',delta);
-	while (delta>0.05) {
-
+	//while (delta>0.05) {
+		vector = calculateunitaryvector(center,satelite) //returns an object, the vector with Vx and Vy
 		
-	}
+		movetocloserposition(center,vector,scene,allelements);
+		//console.log('paso movecloser');
+
+		//console.log(allelements);
+
+		delta = calculatedistance(center,satelite)-(allelements[center].width/2+allelements[satelite].width/2);
+
+		//console.log('new delta :',delta);
+		
+
+	//}
 	
 }
 
@@ -321,21 +368,28 @@ function atractrepulsion(allelements,scene){
 		//now we have to atract them
 
 		filtered.forEach(near => {
-			bringcloser(element,near)
+			let k
+			for (let j = 0; j < allelements.length; j++) {
+				const element2 = allelements[j];
+				if (element2.id==near.id) {
+					console.log('gotcha!!!');
+					k = j //k is the index of the element that i want to atract
+				}
+			}
+			//i is the index of the centre element and k is the index of the satelite
+			bringcloser(i,k,scene,allelements) 
 		});
 		
 		
 	}
 
-	let elementid = allelements[0].id
+	// let elementid = allelements[0].id
 	
-	var el = scene.querySelector('#'+elementid);
+	// var el = scene.querySelector('#'+elementid);
 
-	console.log(el);
+	// console.log(el);
 
-	console.log('width : ',el.getAttribute('width'));
 	
-	//el.setAttribute('animation', "property: position; to: 1 8 -10");
 }
 
 
