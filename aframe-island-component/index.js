@@ -252,132 +252,167 @@ function printBoxes(boxes, positioning, num, elem,geometry) {
 }
 
 function calculatedistance(element, actual){
-	// console.log('entro en calculatedistance');
-	// console.log('element : ',element);
-	// console.log('actual :',actual);
+	console.log('entro en calculatedistance');
+	console.log('element : ',element);
+	console.log('actual :',actual);
+
+	
 	
 	return Math.sqrt(Math.pow(element.posx-actual.posx,2)+Math.pow(element.posz-actual.posz,2));
 }
 
-function caculatedelta(center, satelite){
+//the function return delta returns the distance between two cylinders from border to border 
 
+function calculatedelta(center, satelite, allelements){
+
+	let distance = calculatedistance(center,satelite)
+
+	console.log('distance :', distance);
+	
+
+	return distance-(center.width/2+satelite.width/2);
 }
 
-function findnear(actual, rest) {
+function findnear(actual, allelements) {
 
-	// console.log('in findnear');
-	// console.log('actual',actual);
+	 console.log('in findnear');
+	 console.log('actual',actual);
 	// console.log('rest',rest);
 
 	result = []
 
-	for (let i = 0; i < rest.length; i++) {
-		const element = rest[i];
+	for (let i = 0; i < allelements.length; i++) {
+		const element = allelements[i];
 		if(calculatedistance(element,actual) < 6 && element.id != actual.id){
 			//console.log('esta cercaaa');
 			result.push(element);
 		}
 	}
+	//console.log('result',result[0].id);
+	
 	return result;
 }
 
 //returns de (Vx,Vz) unitary vector 
-function calculateunitaryvector(actual, other) {
-	//the vector OA = actual - other
-	x = other.posx - actual.posx
-	//console.log(other.posx,x);
-	z = other.posz -actual.posz 
+function calculateunitaryvector(center, satelite) {
+	//the vector SC = center - satelite
+	x = center.posx - satelite.posx
+	//console.log(satelite.posx,x);
+	z = center.posz -satelite.posz 
 	//console.log('vector nonunitary : (',x,',',z,')');
 	modulo = Math.sqrt(Math.pow(x,2)+Math.pow(z,2))
 	//console.log('module :', modulo);
 	
-	OA ={
+	//SC is the satelite-center vector
+	SC ={
 		posx : x/modulo ,
 		posz : z/modulo
 	}
 
-	return OA
+	return SC
 
 }
 
-function movetocloserposition(cylinder,unitary,scene,allelements) {
-		console.log(
-			'cylinder',cylinder,
-			'vector',unitary
-		);
+function movetocloserposition(center,satelite,unitary,scene,allelements,delta) {
+		// console.log('satelite',satelite);
 
-		var el = scene.querySelector('#'+cylinder.id);
+		// console.log('vector',unitary);
+		
 
-		x = unitary.posx
-		z = unitary.posz
+		var el = scene.querySelector('#'+satelite.id);
 
-		console.log('newposition :('+cylinder.posx+x+','+cylinder.posz+z+')');
+		x = unitary.posx/(delta*100)
+		z = unitary.posz/(delta*100)
+
+		console.log('x,z : ',x,z);
+		
+
+		newposx = satelite.posx+x
+		newposz = satelite.posz+z
+
+		console.log('newposition :('+newposx+','+newposz+')');
 		
 		
-		el.setAttribute('animation', "property: position; to: "+x+z);
+		el.setAttribute('animation', "property: position; to:"+ x+" 0 "+ z);
+		//el.setAttribute(position,)
 
 
 		allelements.forEach(element => {
-			if (element.id==cylinder.id) {
-				element.posx = cylinder.posx+x;
-				element.posz = cylinder.posz+z
+			if (element.id==satelite.id) {
+				//console.log('el elementoooo', element);
+				
+				element.posx = satelite.posx+x;
+				element.posz = satelite.posz+z
+				//console.log('distance to mid',calculatedistance(center,element));
+				
+				element.distancemiddle = calculatedistance(center,element)
+
+				//console.log('el elementoooo 2', element);
+				
 			}
 		});
-		
+
+		console.log('updatedallelements : ',allelements);
 		
 }
 
 function bringcloser(center, satelite,scene,allelements){
-	console.log('distancia : ',calculatedistance(allelements[center],allelements[satelite]));
+	console.log('distancia : ',calculatedistance(center,satelite));
 	
-	delta = calculatedistance(center,satelite)-(center.width/2+satelite.width/2);
+	delta = calculatedelta(center, satelite, allelements) 
 	
 	
 	console.log('delta',delta);
-	//while (delta>0.05) {
+	while (delta>0.05) {
 		vector = calculateunitaryvector(center,satelite) //returns an object, the vector with Vx and Vy
 		
-		movetocloserposition(center,vector,scene,allelements);
-		//console.log('paso movecloser');
-
-		//console.log(allelements);
-
-		delta = calculatedistance(center,satelite)-(allelements[center].width/2+allelements[satelite].width/2);
-
-		//console.log('new delta :',delta);
+		console.log('unitary vector',vector);
 		
 
-	//}
+		movetocloserposition(center,satelite,vector,scene,allelements,delta);
+
+		console.log('posx del primero (debería ser 0)',allelements[0].posx);
+		console.log('posx del segundo(debería ser 0.75)',allelements[1].posx);
+		
+		satelite = allelements.filter(element => element.id == satelite.id)
+
+		newsat = satelite[0]
+
+		console.log('new satélite',newsat);
+
+		dist = calculatedistance(center,newsat);
+
+		console.log('dist',dist);
+		
+		
+
+		delta = calculatedelta(center, newsat, allelements) 
+
+		console.log('new delta :',delta);
+	}
 	
 }
 
 function atractrepulsion(allelements,scene){
 	console.log('------>');
-	console.log(allelements);
+	console.log(allelements)	
 	console.log('<-----');
 
 	for (let i = 0; i < allelements.length; i++) {
 		const element = allelements[i]; //the center. around this element we atract the rest that are in a radious of 11
-		//filtered = allelements.filter(el => el.distancemiddle )
 
+		//in filtered we have an array with the elements that are near of "element"
 		filtered = findnear(element, allelements)
 
-		console.log(filtered);
+		console.log('filtered :',filtered);
 
 		//in filtered we have the cylinders near us
 		//now we have to atract them
 
 		filtered.forEach(near => {
-			let k
-			for (let j = 0; j < allelements.length; j++) {
-				const element2 = allelements[j];
-				if (element2.id==near.id) {
-					console.log('gotcha!!!');
-					k = j //k is the index of the element that i want to atract
-				}
+			if (calculatedelta(element,near)>0.05) {
+				bringcloser(element,near,scene,allelements) 
 			}
-			//i is the index of the centre element and k is the index of the satelite
-			bringcloser(i,k,scene,allelements) 
 		});
 		
 		
