@@ -252,12 +252,11 @@ function printBoxes(boxes, positioning, num, elem,geometry) {
 }
 
 function calculatedistance(element, actual){
-	console.log('entro en calculatedistance');
-	console.log('element : ',element);
-	console.log('actual :',actual);
-
+	//console.log('in calculatedistance');
 	
-	
+	// console.log('entro en calculatedistance');
+	// console.log('element : ',element);
+	// console.log('actual :',actual);
 	return Math.sqrt(Math.pow(element.posx-actual.posx,2)+Math.pow(element.posz-actual.posz,2));
 }
 
@@ -265,9 +264,12 @@ function calculatedistance(element, actual){
 
 function calculatedelta(center, satelite, allelements){
 
+	//console.log('in calculatedelta');
+	
+
 	let distance = calculatedistance(center,satelite)
 
-	console.log('distance :', distance);
+	//console.log('distance :', distance);
 	
 
 	return distance-(center.width/2+satelite.width/2);
@@ -275,8 +277,8 @@ function calculatedelta(center, satelite, allelements){
 
 function findnear(actual, allelements) {
 
-	 console.log('in findnear');
-	 console.log('actual',actual);
+	 //console.log('in findnear');
+	 //console.log('actual',actual);
 	// console.log('rest',rest);
 
 	result = []
@@ -314,6 +316,8 @@ function calculateunitaryvector(center, satelite) {
 }
 
 function movetocloserposition(center,satelite,unitary,scene,allelements,delta) {
+	//console.log('in movetocloserposition');
+	
 		// console.log('satelite',satelite);
 
 		// console.log('vector',unitary);
@@ -321,8 +325,13 @@ function movetocloserposition(center,satelite,unitary,scene,allelements,delta) {
 
 		var el = scene.querySelector('#'+satelite.id);
 
-		x = unitary.posx/(delta*100)
-		z = unitary.posz/(delta*100)
+		console.log(el);
+		
+
+		//alpha = calculatealpha(diist, delta, satelite)
+
+		x = unitary.posx*(delta)
+		z = unitary.posz*(delta)
 
 		console.log('x,z : ',x,z);
 		
@@ -330,7 +339,7 @@ function movetocloserposition(center,satelite,unitary,scene,allelements,delta) {
 		newposx = satelite.posx+x
 		newposz = satelite.posz+z
 
-		console.log('newposition :('+newposx+','+newposz+')');
+		//console.log('newposition :('+newposx+','+newposz+')');
 		
 		
 		el.setAttribute('animation', "property: position; to:"+ x+" 0 "+ z);
@@ -352,44 +361,44 @@ function movetocloserposition(center,satelite,unitary,scene,allelements,delta) {
 			}
 		});
 
-		console.log('updatedallelements : ',allelements);
+		//console.log('updatedallelements : ',allelements);
 		
 }
 
 function bringcloser(center, satelite,scene,allelements){
-	console.log('distancia : ',calculatedistance(center,satelite));
+	console.log('in bringcloser');
+	
+	//console.log('distancia : ',calculatedistance(center,satelite));
 	
 	delta = calculatedelta(center, satelite, allelements) 
 	
 	
-	console.log('delta',delta);
-	while (delta>0.05) {
+	//console.log('delta',delta);
+	//while (delta>0.01) {
 		vector = calculateunitaryvector(center,satelite) //returns an object, the vector with Vx and Vy
 		
-		console.log('unitary vector',vector);
+		//console.log('unitary vector',vector);
 		
 
 		movetocloserposition(center,satelite,vector,scene,allelements,delta);
 
-		console.log('posx del primero (debería ser 0)',allelements[0].posx);
-		console.log('posx del segundo(debería ser 0.75)',allelements[1].posx);
+		// console.log('posx del primero (debería ser 0)',allelements[0].posx);
+		// console.log('posx del segundo(debería ser 0.75)',allelements[1].posx);
 		
 		satelite = allelements.filter(element => element.id == satelite.id)
 
-		newsat = satelite[0]
+		satelite = satelite[0]
 
-		console.log('new satélite',newsat);
+		//console.log('new satélite',newsat);
 
-		dist = calculatedistance(center,newsat);
+		dist = calculatedistance(center,satelite);
 
-		console.log('dist',dist);
-		
-		
+		//console.log('dist',dist);
+	
+		delta = calculatedelta(center, satelite, allelements) 
 
-		delta = calculatedelta(center, newsat, allelements) 
-
-		console.log('new delta :',delta);
-	}
+		//console.log('new delta :',delta);
+	//}
 	
 }
 
@@ -410,11 +419,17 @@ function atractrepulsion(allelements,scene){
 		//now we have to atract them
 
 		filtered.forEach(near => {
+			console.log('near', near);
+			
 			if (calculatedelta(element,near)>0.05) {
 				bringcloser(element,near,scene,allelements) 
 			}
 		});
+
+		console.log('FINISHHHHHHHH');
 		
+		console.log(allelements);
+
 		
 	}
 
