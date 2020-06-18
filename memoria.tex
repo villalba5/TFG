@@ -1,0 +1,504 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Plantilla de memoria en LaTeX para la ETSIT - Universidad Rey Juan Carlos
+%%
+%% Por Gregorio Robles <grex arroba gsyc.urjc.es>
+%%     Grupo de Sistemas y Comunicaciones
+%%     Escuela Técnica Superior de Ingenieros de Telecomunicación
+%%     Universidad Rey Juan Carlos
+%% (muchas ideas tomadas de Internet, colegas del GSyC, antiguos alumnos...
+%%  etc. Muchas gracias a todos)
+%%
+%% La última versión de esta plantilla está siempre disponible en:
+%%     https://github.com/gregoriorobles/plantilla-memoria
+%%
+%% Para obtener PDF, ejecuta en la shell:
+%%   make
+%% (las imágenes deben ir en PNG o JPG)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper, 12pt]{book}
+%\usepackage[T1]{fontenc}
+
+
+\usepackage[a4paper, left=2.5cm, right=2.5cm, top=3cm, bottom=3cm]{geometry}
+\usepackage{times}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel} % Comenta esta línea si tu memoria es en inglés
+\usepackage{url}
+%\usepackage[dvipdfm]{graphicx}
+\usepackage{graphicx}
+\usepackage{float}  %% H para posicionar figuras
+\usepackage[nottoc, notlot, notlof, notindex]{tocbibind} %% Opciones de índice
+\usepackage{latexsym}  %% Logo LaTeX
+
+\title{Memoria del Proyecto VISUALIZACIÓN DE DATOS EN REALIDAD VIRTUAL: EVOLUCIÓN DE SISTEMAS}
+\author{ Álvaro Villalba Cabañas}
+
+\renewcommand{\baselinestretch}{1.5}  %% Interlineado
+
+\begin{document}
+
+\renewcommand{\refname}{Bibliografía}  %% Renombrando
+\renewcommand{\appendixname}{Apéndice}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PORTADA
+
+\begin{titlepage}
+\begin{center}
+\begin{tabular}[c]{c c}
+%\includegraphics[bb=0 0 194 352, scale=0.25]{logo} &
+\includegraphics[scale=0.25]{img/logo_vect.png} &
+\begin{tabular}[b]{l}
+\Huge
+\textsf{UNIVERSIDAD} \\
+\Huge
+\textsf{REY JUAN CARLOS} \\
+\end{tabular}
+\\
+\end{tabular}
+
+\vspace{3cm}
+
+\Large
+GRADO EN INGENIERÍA EN TECNOLOGÍAS DE LA TELECOMUNICACIÓN
+
+\vspace{0.4cm}
+
+\large
+Curso Académico 2019/2020
+
+\vspace{0.8cm}
+
+Trabajo Fin de Grado
+
+\vspace{2.5cm}
+
+\LARGE
+VISUALIZACIÓN DE DATOS EN REALIDAD VIRTUAL: EVOLUCIÓN DE SISTEMAS
+
+\vspace{4cm}
+
+\large
+Autor : Álvaro Villalba Cabañas \\
+Tutor : Dr. Jesús María González Barahona
+\end{center}
+\end{titlepage}
+
+\newpage
+\mbox{}
+\thispagestyle{empty} % para que no se numere esta pagina
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Para firmar
+\clearpage
+\pagenumbering{gobble}
+\chapter*{}
+
+\vspace{-4cm}
+\begin{center}
+\LARGE
+\textbf{Trabajo Fin de Grado}
+
+\vspace{1cm}
+\large
+Visualización de datos en Realidad Virtual: Evolución de Sistemas
+
+\vspace{1cm}
+\large
+\textbf{Autor :} Álvaro Villalba Cabañas \\
+\textbf{Tutor :} Dr. Jesús María González Barahona
+\end{center}
+
+\vspace{1cm}
+La defensa del presente Proyecto Fin de Carrera se realizó el día \qquad$\;\,$ de \qquad\qquad\qquad\qquad \newline de 20XX, siendo calificada por el siguiente tribunal:
+
+
+\vspace{0.5cm}
+\textbf{Presidente:}
+
+\vspace{1.2cm}
+\textbf{Secretario:}
+
+\vspace{1.2cm}
+\textbf{Vocal:}
+
+
+\vspace{1.2cm}
+y habiendo obtenido la siguiente calificación:
+
+\vspace{1cm}
+\textbf{Calificación:}
+
+
+\vspace{1cm}
+\begin{flushright}
+Fuenlabrada, a \qquad$\;\,$ de \qquad\qquad\qquad\qquad de 20XX
+\end{flushright}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Dedicatoria
+
+\chapter*{}
+\pagenumbering{Roman} % para comenzar la numeracion de paginas en numeros romanos
+\begin{flushright}
+\textit{Dedicado a \\
+mi familia / mi abuelo / mi abuela}
+\end{flushright}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Agradecimientos
+
+\chapter*{Agradecimientos}
+%\addcontentsline{toc}{chapter}{Agradecimientos} % si queremos que aparezca en el índice
+\markboth{AGRADECIMIENTOS}{AGRADECIMIENTOS} % encabezado 
+
+Aquí vienen los agradecimientos\ldots Aunque está bien acordarse de la pareja, no hay que olvidarse de dar las gracias a tu madre, que aunque a veces no lo parezca disfrutará tanto de tus logros como tú\ldots 
+Además, la pareja quizás no sea para siempre, pero tu madre sí.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Resumen
+
+\chapter*{Resumen}
+%\addcontentsline{toc}{chapter}{Resumen} % si queremos que aparezca en el índice
+\markboth{RESUMEN}{RESUMEN} % encabezado
+
+Aquí viene un resumen del proyecto.
+Ha de constar de tres o cuatro párrafos, donde se presente de manera clara y concisa de qué va el proyecto. 
+Han de quedar respondidas las siguientes preguntas:
+
+\begin{itemize}
+  \item ¿De qué va este proyecto? ¿Cuál es su objetivo principal?
+  \item ¿Cómo se ha realizado? ¿Qué tecnologías están involucradas?
+  \item ¿En qué contexto se ha realizado el proyecto? ¿Es un proyecto dentro de un marco general?
+\end{itemize}
+
+Lo mejor es escribir el resumen al final.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Resumen en inglés
+
+\chapter*{Summary}
+%\addcontentsline{toc}{chapter}{Summary} % si queremos que aparezca en el índice
+\markboth{SUMMARY}{SUMMARY} % encabezado
+
+Here comes a translation of the ``Resumen'' into English. 
+Please, double check it for correct grammar and spelling.
+As it is the translation of the ``Resumen'', which is supposed to be written at the end, this as well should be filled out just before submitting.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ÍNDICES %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Las buenas noticias es que los índices se generan automáticamente.
+% Lo único que tienes que hacer es elegir cuáles quieren que se generen,
+% y comentar/descomentar esa instrucción de LaTeX.
+
+%%%% Índice de contenidos
+\tableofcontents 
+%%%% Índice de figuras
+\cleardoublepage
+%\addcontentsline{toc}{chapter}{Lista de figuras} % para que aparezca en el indice de contenidos
+\listoffigures % indice de figuras
+%%%% Índice de tablas
+%\cleardoublepage
+%\addcontentsline{toc}{chapter}{Lista de tablas} % para que aparezca en el indice de contenidos
+%\listoftables % indice de tablas
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% INTRODUCCIÓN %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage
+\chapter{Introducción}
+\label{sec:intro} % etiqueta para poder referenciar luego en el texto con ~\ref{sec:intro}
+\pagenumbering{arabic} % para empezar la numeración de página con números
+
+Este proyecto de fin de grado consiste en la representación de datos en realidad virtual haciendo una analogía con la formación de islas. Al igual que las islas suelen nacer de un volcán, cuyo cráter estará aproximadamente en el centro de dicha isla al finalizar el proceso de formación, empezaremos a colocar los elementos geométricos en el centro y, siguiendo una forma de espiral, iremos colocando los elementos formando círculos concéntricos.
+
+Los datos de entrada serán en formato JSON y en base a sus propiedades podremos hacer una analogía a figuras geométricas como cilindros o prismas. Dependiendo de lo que estemos tratando tendremos en cuenta unas propiedades u otras y podremos representar en las figuras geométricas aquellas propiedades que nos sean de mayor interés, obteniendo una visión más general de nuestros datos.
+
+Para desarrollar este proyecto se va a utilizar la tecnología A-Frame\footnote{\url{https://aframe.io/}}., que es un framework de JavaScript de código abierto para crear escenas de realidad virtual. Para los componentes de A-Frame utilizaremos angle.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OBJETIVOS %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage % empezamos en página impar
+\chapter{Objetivos} % título del capítulo (se muestra)
+\label{chap:objetivos} % identificador del capítulo (no se muestra, es para poder referenciarlo)
+
+\section{Objetivo general} % título de sección (se muestra)
+\label{sec:objetivo-general} % identificador de sección (no se muestra, es para poder referenciarla)
+
+
+Mi trabajo fin de grado consiste en crear de una aplicación de visualización de datos en realidad virtual, asimilando el proceso de creación de mis elementos al de las islas volcánicas. El objetivo general es que mi componente pueda servir a otras personas y lo incorporen a sus proyectos a la hora de visualizar datos en realidad virtual.
+
+\section{Objetivos específicos}
+\label{sec:objetivos-especificos}
+
+\subsection{Primeros pasos}
+\label{subsec:primerospasos}
+
+Antes de ponernos propiamente a desarrollar el componente final del proyecto, el primer objetivo fue conocer la tecnología, estudiar las peculiaridades que tenía y desarrollar algunas escenas en las que, siguiendo los pasos de un tutorial\footnote{\url{https://jgbarah.github.io/aframe-playground/}}, fue bastante más rápida la asimilación de todos los conceptos necesarios para comenzar.
+
+Los primeros pasos básicamente consistieron en entender como funciona A-Frame y sus particularidades, empezar a crear escenas y crear el primer componente muy básico al que le pasamos la altura y la anchura y nos fabricaba un cubo.
+
+
+\subsection{Sprint I}
+\label{subsec:primer sprint}
+
+El primer sprint consistió en desarrollar una primera versión del componente, probando diferentes formas de representación: partiendo siempre de la idea de que en el centro de la escena siempre iba a ir el primer elemento, probamos a colocar cuatro elementos por circunferencia, colocarlos aleatoriamente sin que se produjera ninguna superposición y colocándolos en forma de espiral colocando el máximo en cada circunferencia. Finalmente fue esta última opción en la que nos centramos para el desarrollo del componente ya que nos resultó el que más se asemejaba a la idea que teníamos de representación en forma de islas.
+
+Una vez fue avanzando el proyecto fueron saliendo diferentes formas de representarlos como en circunferencias concéntricas con el radio del mayor elemento pero el resultado no fue el deseado y descartamos esa forma de representación.
+
+También surgió la posibilidad de representar los objetos con otros elementos además de cajas o prismas y fue la de los cilindros o las esferas, que desde un plano cenital de la escena nos mostraba circunferencias en vez de cuadrados, cambiando un poco la representación.
+
+Finalmente para concluir este Sprint adoptamos la forma de representación en espiral tanto con cajas y prismas como con cilindros, pudiendo cambiar entre unos y otros con un parámetro que se le pasa al componente como una variable.
+
+El primer sprint quedó subido a un repositorio de Github\footnote{\url{https://github.com/villalba5/Sprint1/tree/master/aframe-island-component}}, en el cual represento diferente número de elementos tanto con cubos/prismas como con cilindros
+
+
+\subsection{Sprint II}
+\label{subsec:segundo sprint}
+
+El segundo sprint consistió en la implementación de un algoritmo de atracción-repulsión para mejorar aún más el componente desarrollado en el primer sprint. Aunque el componente del primer Sprint dejaba los elementos muy juntos, aún dejaba huecos entre ellos y para intentar minimizar dichos huecos decidimos la implementación de estos algoritmos que mediante una analogía a los cuerpos celestes, dependiendo del tamaño de los elementos atraía más a los cercanos o menos.
+
+[...]
+
+\section{Planificación temporal}
+\label{sec:planificacion-temporal}
+
+El comienzo de este proyecto tuvo lugar en Septiembre de 2019, por lo que la duración en tiempo natural oscilará entre los 10 u 11 meses. El nivel de esfuerzo inicialmente no fue exigente, siendo principalmente los fines de semana cuando podía dedicarle algo de tiempo al proyecto. A medida que fui aprobando el resto de asignaturas el nivel de esfuerzo fue creciendo pudiendo estar algún día entre semana dedicado al proyecto pero nunca he tenido la dedicación completa debido a que lo he tenido que compaginar con otras asignaturas y con trabajo.
+
+\begin{table}
+ \begin{center}
+  \begin{tabular}{ | l | c | r |} % tenemos tres colummnas, la primera alineada a la izquierda (l), la segunda al centro (c) y la tercera a la derecha (r). El | indica que entre las columnas habrá una línea separadora.
+    \hline
+    Objetivos & Mes de inicio & Mes de finalización \\ \hline
+Primeros pasos & Septiembre 2019 & Octubre  2019\\
+Sprint I & Noviembre 2019 & Marzo 2020\\
+Sprint II & Abril  2020& Junio 2020\\ 
+    \hline
+  \end{tabular}
+  \label{tabla:plani}
+  \caption{Tabla de resumen de la duración de cada objetivo. Como podemos ver en el contenido de la tabla estuvimos durante los meses de Septiembre y Octubre de 2019 con los primeros pasos. Posteriormente a superar el objetivo avanzamos al sprint I, para el cual dedicamos los meses comprendidos entre Noviembre de 2019 y Marzo de 2020, podemos observar que fue el periodo más largo ya que fue el proceso de creación del componente y hubo que ajustar muchos detalles. Para finalizar los objetivos estuvimos completando el sprint II en los meses comprendidos entre Abril y Junio de 2020.}
+ \end{center}
+\end{table}
+
+Podemos ver una tabla resumida con los meses de inicio y finalización de cada uno de los objetivos llamada \emph{Cuadro 2.1}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ESTADO DEL ARTE %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage
+\chapter{Tecnologías utilizadas y Estado del arte}
+\label{chap:estado}
+
+\section{ Tecnologías utilizadas} 
+\label{sec:tech}
+
+Para el desarrollo del proyecto se han utilizado las tecnologías que se describen a continuación:
+
+\subsection{ A-Frame} 
+\label{sec:aframe}
+
+A-Frame es un framework web de código abierto de three.js, que a su vez es una librería de JavaScript, uno de los lenguajes con más popularidad dentro del entorno de desarrollo de software tanto de parte del navegador como de parte del servidor debido a sus numerosos frameworks que ayudan a esa versatilidad.  El objetivo de A-Frame es poder crear escenas en realidad virtual dentro del navegador. Al ser un framework de three.js vamos a poder utilizar todas las funciones existentes en three.js, entre las cuales vamos a encontrar especial utilidad las relacionadas con el modelado 3D, el cálculo de distancias entre elementos geométricos y todas las funciones relacionadas con la geometría.
+ 
+ A-Frame tiene muchos beneficios entre los que está la compatibilidad con los frameworks de JavaScript más utilizados: AngularJS, React y Vue.js. Otro de sus beneficios es que no es necessario instalar nada, simplemente basta con abrir una etiqueta \texttt{<a-scene>} dentro del body de nuestro fichero HTML, esta etiqueta nos creará una escena de realidad virtual y posteriormente podremos crear componentes para que cuando le pasemos determinados parámetros nos muestre lo que hemos programado. Cuenta con una excelente documentación en su página web\footnote{\url{https://aframe.io/}}, además de una comunidad muy amplia y con multitud de componentes, tanto de la comunidad\footnote{\url{https://www.npmjs.com/search?q=keywords:aframe&page=1&ranking=optimal }} como de los propios creadores de A-Frame\footnote{\url{https://supermedium.com/superframe/}} que se pueden usar gratuitamente debido a que es software libre. Para empezar a utilizar A-Frame es recomendable hacer el tutorial desde cero \footnote{\url{https://aframe.io/docs/master/introduction/}}, luego como vamos querer crear nuestros propios componentes podemos ver el tutorial de como crear un componente para A-Frame\footnote{\url{https://aframe.io/docs/master/introduction/writing-a-component.html#example-box-component}}.
+ 
+ La arquitectura de A-Frame es una arquitectura entidad-componente, la más utilizada en el desarrollo de videojuegos, posee una gran flexibilidad ya que todos los elementos presentes en la escena de realidad virtual pueden ser modelados como entities (entidades). Cada una de las entidades posee uno o varios componentes que contienen datos o estados.
+ 
+  
+\subsection{ HTML} 
+\label{sec:html}
+
+HTML, siglas de HyperText Markup Language en inglés, en español lo podríamos traducir como lenguaje de marcado de hipertexto. HTML es un lenguaje de marcado que determina la estructura que va a tener nuestra página web mediante el uso de etiquetas. En el caso de nuestro proyecto va a ser la punta del iceberg, va a ser nuestra parte visible en la que vamos a incluir nuestra etiqueta \texttt{<a-scene>} para generar la escena de realidad virtual y nuestra etiqueta para llamar al componente. Luego vamos a poder utilizar todas las etiquetas propias de HTML para modificar las propiedades de la escena, por lo tanto mediante HTML vamos a hacer que nuestra escena tome la apariencia que deseamos.
+
+
+El marcado en HTML incluye elementos especiales tales como \texttt{<a-scene>, <head>, <title>, <body>, <header>, <footer>, <article>, <section>, <p>, <div>, <span>, <img>, <aside>, <audio>, <canvas>, <datalist>, <details>, <embed>, <nav>, <output>, <progress>, <video>, <ul>, <ol>, <li>}, y muchos otros más.
+
+ Además de elementos, HTML tiene atributos por los cuales vamos a definir propiedades especiales de los elementos. De esta forma una línea de código en HTML podría parecerse a esto : \newline  \texttt{<nombre-de-elemento atributo=``valor''>Contenido</nombre-de-elemento>} \newline Cabe destacar que el valor es una variable que afecta al atributo, pudiendo conseguir efectos diferentes. Por ejemplo el atributo puede ser un \texttt{href} y la variable valor una ruta hacia una imagen dentro de un elemento \texttt{img}.
+
+
+\subsection{ JavaScript} 
+\label{sec:javascript}
+
+JavaScript es un lenguaje de programación interpretado, lo que tiene sus cosas buenas y sus cosas malas. Como cosas buenas es que es fácilmente modificable módulos muy grandes del código y como desventajas frente a los lenguajes de programación compilados es que los interpretados al tener un intérprete va a ser más lento en la ejecución que los compilados ya que los compilados traducen a código máquina las instrucciones que le hemos dicho y los interpretados traducen a medida que es necesario. Para trabajar con navegadores web utilizar lenguajes de programación interpretados es un acierto ya que así no dependes de la plataforma donde se ejecute el código si no del propio navegador.
+
+Todos los navegadores modernos interpretan código JavaScript integrado en sus páginas web, de este modo es muy normal trabajar con HTML para definir la estructura de la web, CSS para darle los estilos que prefieras y tome un aspecto más moderno y JavaScript para dotar de funcionalidad los distintos elementos de la página web. Para poder interactuar con la página web se provee al lenguaje JavaScript de una implementación del DOM, Document Object Model, a través del cual los programas pueden acceder y modificar el contenido, estructura y estilo de los documentos HTML y XML, que es para lo que se diseñó principalmente.
+
+Cabe destacar la versatilidad del lenguaje JavaScript, siendo uno de los más populares en la programación web debido a que puede ser utilizado tanto del lado del navegador, con los frameworks AngularJS, Vue.js y React, como del lado del servidor, con Node.js como uno de los notables ejemplos de JavaScript en el lado del servidor, siendo usado en proyectos importantes.
+\subsection{ Three.js} 
+\label{sec:three}
+
+Three.js es una liviana biblioteca de JavaScript utilizada para representar gráficos en 3D y crear escenas de realidad virtual en un navegador web. Esta biblioteca fue creada y liberada en GitHub por el español Ricardo Cabello en abril de 2010, conocido por su seudónimo de Mr.doob.
+
+Para renderizar los gráficos en 3D podemos utilizar WebGL, API de JavaScript para renderizar gráficos en 3D y 2D. Three.js es una librería creada sobre WebGL, lo que garantiza la compatibilidad de todos los navegadores modernos. Three.js es a WebGL lo que JQuery es a JavaScript, ofrece una abstracción de las complejidades y ameniza el uso de los gráficos 3D a los programadores.
+
+Three.js posee muchas funciones para el tratamiento con elementos geométricos y escenas de realidad virtual, habiendo una función ya creada para casi todo lo que puedas imaginar. Todas las operaciones con matrices, vectores en el espacio... También encontramos funciones para representar elementos geométricos como cajas, cilindros, esferas... Hay funciones para calcular las distancias entre ellos, los vectores de los centros y muchas más.
+
+\section{ Estado del arte} 
+\label{sec:three}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DISEÑO E IMPLEMENTACIÓN %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage
+\chapter{Diseño e implementación}
+
+A continuación describo la arquitectura general del proyecto y describo los procesos por los que pasamos en el desarrollo, entrando en los detalles concretos del proyecto y comentando el porqué de cada una de las decisiones que tomamos a medida que se nos iban presentando problemas.
+\section{Arquitectura general} 
+\label{sec:arquitectura}
+
+La arquitectura seguida en el proyecto es la propia de A-Frame:  entidad- componente - sistema (ECS). Es una arquitectura utilizada habitualmente en el desarrollo de videojuegos o escenas 3D. La arquitectura  entidad-componente-sistema sigue la composición sobre la herencia o principio de reutilización del material compuesto, lo que nos ahorra mucho a la hora de desarrollar escenas en realidad virtual porque podemos modelar cada uno de los elementos de nuestra escena como una entidad, por ejemplo, podemos modelar una escena de una ciudad creando una entidad ciudad que esta formada por varios componentes: edificio, carretera, persona, vehículo, árbol \dots
+
+Cada entidad puede estar formada por uno o varios componentes que van a hacer que se comporte de una manera determinada o tenga la apariencia que deseemos.
+
+La estructura del proyecto va a consistir en dos componentes, uno de ellos será el encargado de crear el elemento geométrico con los parámetros adecuados (en el caso de los prismas o cubos con saber el ancho y el alto nos valdría, en el caso de un cilindro nos valdría con el radio y la altura o podemos aproximar el radio a la mitad del ancho de una caja) y situarlo en la posición indicada según unas variables que se le pasen. Esas variables se le pasarán desde el otro componente, con dos funciones, la primera es la de leer el JSON con los datos necesarios para poder obtener la información que necesita el componente que crea los elementos geométricos y los coloca en la escena y la segunda es la de calcular la posición del siguiente elemento, teniendo en cuenta que queremos que se sitúen sin producirse ninguna superposición y dejando el mínimo hueco posible entre los elementos de la escena.
+ 
+\section{Diseño del componente que crea y coloca un elemento dentro de la isla} 
+\label{sec:designcomponent1}
+
+El primer componente como se ha dicho anteriormente va a ser el encargado de dos funciones fundamentalmente: crear un elemento geométrico y posicionarlo dentro de la escena. 
+{\footnotesize
+\begin{verbatim}
+Descripción de los posibles parámetros que puede recibir el componente, 
+la primera palabra es el nombre del parámetro, el segundo es el tipo de dato 
+siendo 'number' un número, color un color tanto en formato hexadecimal como 
+en formato rgb y 'string' una cadena de texto. La última columna quiere decir el 
+valor por defecto que vamos a tener en esas propiedades de no pasarse ningún 
+valor como parámetro al llamar al componente:
+        depth: { type: 'number', default: 1 },
+        height: { type: 'number', default: 1 },
+        width: { type: 'number', default: 1 },
+        color: { type: 'color', default: '#00ffff' },
+        posx: { type: 'number', default: 0 },
+        posy: { type: 'number', default: 0 },
+        posz: { type: 'number', default: 0 },
+        geometry: { type: 'string', default: 'box' }
+    
+\end{verbatim}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% RESULTADOS %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage
+\chapter{Resultados}
+
+En este capítulo se incluyen los resultados de tu trabajo fin de grado.
+
+Si es una herramienta de análisis lo que has realizado, aquí puedes poner ejemplos de haberla utilizado para que se vea su utilidad.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONCLUSIONES %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage
+\chapter{Conclusiones}
+\label{chap:conclusiones}
+
+
+\section{Consecución de objetivos}
+\label{sec:consecucion-objetivos}
+
+Esta sección es la sección espejo de las dos primeras del capítulo de objetivos, donde se planteaba el objetivo general y se elaboraban los específicos.
+
+Es aquí donde hay que debatir qué se ha conseguido y qué no. 
+Cuando algo no se ha conseguido, se ha de justificar, en términos de qué problemas se han encontrado y qué medidas se han tomado para mitigar esos problemas.
+
+Y si has llegado hasta aquí, siempre es bueno pasarle el corrector ortográfico, que las erratas quedan fatal en la memoria final.
+Para eso, en Linux tenemos aspell, que se ejecuta de la siguiente manera desde la línea de \emph{shell}:
+
+\begin{verbatim}
+  aspell --lang=es_ES -c memoria.tex
+\end{verbatim}
+
+\section{Aplicación de lo aprendido}
+\label{sec:aplicacion}
+
+Aquí viene lo que has aprendido durante el Grado/Máster y que has aplicado en el TFG/TFM. Una buena idea es poner las asignaturas más relacionadas y comentar en un párrafo los conocimientos y habilidades puestos en práctica.
+
+\begin{enumerate}
+  \item a
+  \item b
+\end{enumerate}
+
+
+\section{Lecciones aprendidas}
+\label{sec:lecciones_aprendidas}
+
+Aquí viene lo que has aprendido en el Trabajo Fin de Grado/Máster.
+
+\begin{enumerate}
+  \item Aquí viene uno.
+  \item Aquí viene oto.
+\end{enumerate}
+
+
+\section{Trabajos futuros}
+\label{sec:trabajos_futuros}
+
+Ningún proyecto ni software se termina, así que aquí vienen ideas y funcionalidades que estaría bien tener implementadas en el futuro.
+
+Es un apartado que sirve para dar ideas de cara a futuros TFGs/TFMs.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% APÉNDICE(S) %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage
+\appendix
+\chapter{Manual de usuario}
+\label{app:manual}
+
+Esto es un apéndice.
+Si has creado una aplicación, siempre viene bien tener un manual de usuario.
+Pues ponlo aquí.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BIBLIOGRAFIA %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage
+
+% Las siguientes dos instrucciones es todo lo que necesitas
+% para incluir las citas en la memoria
+\bibliographystyle{abbrv}
+\bibliography{memoria}  % memoria.bib es el nombre del fichero que contiene
+% las referencias bibliográficas. Abre ese fichero y mira el formato que tiene,
+% que se conoce como BibTeX. Hay muchos sitios que exportan referencias en
+% formato BibTeX. Prueba a buscar en http://scholar.google.com por referencias
+% y verás que lo puedes hacer de manera sencilla.
+% Más información: 
+% http://texblog.org/2014/04/22/using-google-scholar-to-download-bibtex-citations/
+
+\end{document}
