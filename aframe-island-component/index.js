@@ -278,20 +278,23 @@ function calculatedelta(center, satelite, allelements){
 function findnear(actual, allelements) {
 
 	 //console.log('in findnear');
-	 //console.log('actual',actual);
-	// console.log('rest',rest);
 
-	result = []
+	let result = []
 
 	for (let i = 0; i < allelements.length; i++) {
 		const element = allelements[i];
-		if(calculatedistance(element,actual) < 6 && element.id != actual.id){
+		if(Math.abs(element.distancemiddle-actual.distancemiddle) < 5 && element.id != actual.id){
 			//console.log('esta cercaaa');
 			result.push(element);
+		}else{
+			console.log(element.distancemiddle);
+			
+			console.log('este no ha entrado ->'+element.id);
+			console.log(Math.abs(element.distancemiddle-actual.distancemiddle));
+			
+			
 		}
-	}
-	//console.log('result',result[0].id);
-	
+	}	
 	return result;
 }
 
@@ -339,7 +342,7 @@ function movetocloserposition(center,satelite,unitary,scene,allelements,delta) {
 		newposx = satelite.posx+x
 		newposz = satelite.posz+z
 
-		//console.log('newposition :('+newposx+','+newposz+')');
+		console.log('newposition :('+newposx+','+newposz+')');
 		
 		
 		el.setAttribute('animation', "property: position; to:"+ x+" 0 "+ z);
@@ -365,12 +368,18 @@ function movetocloserposition(center,satelite,unitary,scene,allelements,delta) {
 		
 }
 
-function bringcloser(center, satelite,scene,allelements){
+function move(center, satelite,scene,allelements,delta){
 	console.log('in bringcloser');
+
+	if (delta >0) {
+		console.log('LO ESTOY ACERCANDO!!');
+	} else {
+		console.log('LO ESTOY ALEJANDO');
+	}
 	
 	//console.log('distancia : ',calculatedistance(center,satelite));
 	
-	delta = calculatedelta(center, satelite, allelements) 
+	//delta = calculatedelta(center, satelite, allelements) 
 	
 	
 	//console.log('delta',delta);
@@ -402,13 +411,106 @@ function bringcloser(center, satelite,scene,allelements){
 	
 }
 
+function movetofarposition(center,satelite,vector,scene,allelements,delta) {
+
+	console.log(satelite.id);
+	
+	var el = scene.querySelector('#'+satelite.id);
+
+	x = vector.posx*(delta)
+	z = vector.posz*(delta)
+	console.log('------- far ----------');
+	
+	console.log('x,z : ',x,z);
+
+	newposx = satelite.posx+x
+	newposz = satelite.posz+z
+
+	el.setAttribute('animation', "property: position; to:"+ x+" 0 "+ z);
+
+	allelements.forEach(element => {
+		if (element.id==satelite.id) {
+			//console.log('el elementoooo', element);
+			
+			element.posx = satelite.posx+x;
+			element.posz = satelite.posz+z
+			//console.log('distance to mid',calculatedistance(center,element));
+			
+			element.distancemiddle = calculatedistance(center,element)
+
+			//console.log('el elementoooo 2', element);
+			
+		}
+	});
+
+
+
+}
+
+function repulse(center, satelite,scene,allelements,delta){
+	console.log('repulse'+center.id+satelite.id);
+	
+	vector = calculateunitaryvector(center,satelite) //returns an object, the vector with Vx and Vy
+	console.log('repulse vector');
+	console.log(vector);
+	
+	
+	movetofarposition(center,satelite,vector,scene,allelements,delta)
+
+}
+
+function testnear(allelements,scene) {
+	allelements.forEach(element => {
+		filtered = findnear(element, allelements)
+		filtered.forEach(element2 => {
+			delta = calculatedelta(element,element2,allelements)
+			if (delta==0) {
+				console.log(element.id+' y '+element2.id+'están pegados');
+			} else if (element2.posx!=0&&element2.posz!=0) {
+				move(element,element2,scene,allelements,delta);
+			}else{
+				console.log('no estoy pegado al centro');
+				console.log('delta',Math.abs(calculatedelta(element,element2,allelements)));
+				move(element2,element,scene,allelements,delta)
+				
+				// while(Math.abs(calculatedelta(element,element2,allelements)) >0.05){
+				// 	if (element2.posz<element.posz) { //the center is in the left
+				// 		deltaz = -0.01
+
+				// 		var el = scene.querySelector('#'+element.id);
+
+				// 		el.setAttribute('animation', "property: position; to: 0 0 "+ z);
+
+				// 		allelements.forEach(elementToUpdate => {
+				// 			console.log('buscando el elemento a actualizar');
+							
+				// 			if (elementToUpdate.id==element.id) {
+				// 				element.posz+=deltaz
+				// 				element.distancemiddle = calculatedistance(element2,elementToUpdate)
+								
+				// 			}
+				// 		});
+				// 	}
+				// }
+			}
+		});
+	});
+	
+}
+
+
+
 function atractrepulsion(allelements,scene){
 	console.log('------>');
 	console.log(allelements)	
 	console.log('<-----');
 
 	for (let i = 0; i < allelements.length; i++) {
-		const element = allelements[i]; //the center. around this element we atract the rest that are in a radious of 11
+		
+		const element = allelements[i]; //the center. around this element we atract the rest that are near it
+
+		console.log('Intentando atraer los cercanos de '+element.id);
+
 
 		//in filtered we have an array with the elements that are near of "element"
 		filtered = findnear(element, allelements)
@@ -418,27 +520,30 @@ function atractrepulsion(allelements,scene){
 		//in filtered we have the cylinders near us
 		//now we have to atract them
 
-		filtered.forEach(near => {
-			console.log('near', near);
-			
-			if (calculatedelta(element,near)>0.05) {
-				bringcloser(element,near,scene,allelements) 
-			}
+		filtered.forEach(near => {	
+			delta = calculatedelta(element,near)
+			console.log('distancia delta :'+delta);
+					
+			if (delta!=0 && (near.posx!=0&&near.posz!=0)) {
+				move(element,near,scene,allelements,delta) 
+			}//else if (delta<0) {
+			// 	repulse(element, near, scene, allelements,delta)
+			// }
 		});
 
-		console.log('FINISHHHHHHHH');
+		console.log('-----> TODOS LOS CERCANOS DEL '+element.id);
 		
 		console.log(allelements);
-
-		
 	}
 
-	// let elementid = allelements[0].id
+	console.log('voy al testnear');
 	
-	// var el = scene.querySelector('#'+elementid);
+	//testnear(allelements,scene);
 
-	// console.log(el);
-
+	console.log('Todo completado!!');
+	console.log(allelements);
+	
+	
 	
 }
 
